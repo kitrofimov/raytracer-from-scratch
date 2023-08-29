@@ -1,5 +1,6 @@
 #pragma once
 #include <stdexcept>
+#include <cmath>
 
 template <typename T>
 struct vec3

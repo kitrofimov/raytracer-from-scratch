@@ -3,13 +3,25 @@
 #include "utils/vec/vec2.hpp"
 #include "Window/Window.hpp"
 #include "Camera/Camera.hpp"
+#include "Scene/Scene.hpp"
+#include "Object/Sphere.hpp"
 
 int main()
 {
+    // Initialization
     vec2i window_dimensions = {512, 512};
     Window window(window_dimensions);
     Camera camera({0, 0, 0}, {1, 1}, 1);
     window.clear({0, 0, 0});
+
+    // Scene creation
+    std::vector<std::unique_ptr<Object>> objects;
+    objects.emplace_back(new Sphere({0, 0, 2}, 1, {0, 0, 255, 255}));
+
+    std::vector<std::unique_ptr<Light>> lights;
+    lights.emplace_back(new Light());
+
+    Scene scene(std::move(objects), std::move(lights));
 
     // For every pixel in the window
     for (int i = 0; i < window_dimensions.y; i++)
@@ -18,8 +30,10 @@ int main()
         {
             vec2d ndc = window.pixel_to_ndc({j, i});
             vec3d point_on_projection_plane = window.ndc_to_projection_plane(ndc, &camera);
-            vec3d ray_direction = point_on_projection_plane - camera->position;
-            window.draw_pixel(ndc, {255, 0, 0, 255});
+            vec3d ray_direction = (point_on_projection_plane - camera.position).normalize();
+
+            color_t color = scene.cast_ray(camera.position, ray_direction);
+            window.draw_pixel(ndc, color);
         }
     }
 
