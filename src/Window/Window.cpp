@@ -2,10 +2,12 @@
 #include <SDL2/SDL.h>
 #include "utils/vec/vec2.hpp"
 #include "Window.hpp"
+#include "Camera/Camera.hpp"
 #include "constants.hpp"
 
 Window::Window(vec2i dimensions)
 {
+    this->dimensions = dimensions;
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         std::cout << "Failed to initialize SDL2 library: " << SDL_GetError() << std::endl;
@@ -38,12 +40,6 @@ void Window::clear(color_t c)
     SDL_RenderClear(this->sdl_renderer);
 }
 
-void Window::draw_pixel(vec2i position, color_t c)
-{
-    SDL_SetRenderDrawColor(this->sdl_renderer, c.r, c.g, c.b, c.a);
-    SDL_RenderDrawPoint(this->sdl_renderer, position.x, position.y);
-}
-
 void Window::swap_buffers()
 {
     SDL_RenderPresent(this->sdl_renderer);
@@ -52,4 +48,29 @@ void Window::swap_buffers()
 bool Window::is_running()
 {
     return this->running;
+}
+
+vec2d Window::pixel_to_ndc(vec2i position)
+{
+    return {
+        (double) position.x / this->dimensions.x * 2 - 1,
+        (double) position.y / this->dimensions.y * 2 - 1
+    };
+}
+
+vec3d Window::ndc_to_projection_plane(vec2d ndc, Camera *camera)
+{
+    return {
+        ndc.x * camera->projection_plane_dims.x,
+        ndc.y * camera->projection_plane_dims.y,
+        camera->d
+    };
+}
+
+// Uses Normalized Device Coordinates, NDC
+void Window::draw_pixel(vec2d ndc, color_t c)
+{
+    SDL_SetRenderDrawColor(this->sdl_renderer, c.r, c.g, c.b, c.a);
+    SDL_RenderDrawPoint(this->sdl_renderer, ((ndc.x + 1) * this->dimensions.x) / 2,
+                                            ((ndc.y + 1) * this->dimensions.y) / 2);
 }

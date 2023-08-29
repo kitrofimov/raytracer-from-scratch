@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL2/SDL.h>
+#include "Camera/Camera.hpp"
 #include "utils/vec/vec2.hpp"
 #include "utils/color/color.hpp"
 
@@ -14,7 +15,10 @@ public:
     void swap_buffers();
     bool is_running();
 
-    void draw_pixel(vec2i position, color_t c);
+    vec2d pixel_to_ndc(vec2i position);
+    vec3d ndc_to_projection_plane(vec2d ndc, Camera *camera);
+
+    void draw_pixel(vec2d ndc, color_t c);
 
 private:
     SDL_Window *sdl_window;
@@ -22,4 +26,5 @@ private:
     SDL_Event sdl_event;
 
     bool running = true;
+    vec2i dimensions;
 };
