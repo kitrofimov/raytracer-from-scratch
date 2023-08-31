@@ -4,7 +4,7 @@
 #include "Window/Window.hpp"
 #include "Camera/Camera.hpp"
 #include "Scene/Scene.hpp"
-#include "Object/Sphere.hpp"
+#include "Sphere/Sphere.hpp"
 
 int main()
 {
@@ -15,13 +15,12 @@ int main()
     window.clear({0, 0, 0});
 
     // Scene creation
-    std::vector<std::unique_ptr<Object>> objects;
-    objects.emplace_back(new Sphere({0, 0, 2}, 1, {0, 0, 255, 255}));
+    std::vector<std::unique_ptr<Sphere>> objects;
+    objects.push_back(std::move(
+        std::make_unique<Sphere>((vec3d) {0, 0, 2}, 1, (color_t) {0, 0, 255, 255})
+    ));
 
-    std::vector<std::unique_ptr<Light>> lights;
-    lights.emplace_back(new Light());
-
-    Scene scene(std::move(objects), std::move(lights));
+    Scene scene(std::move(objects));
 
     // For every pixel in the window
     for (int i = 0; i < window_dimensions.y; i++)
