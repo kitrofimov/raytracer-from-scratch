@@ -9,11 +9,12 @@ template <typename T>
 struct vec2
 {
 public:
-    T x {0};
-    T y {0};
+    T x = 0;
+    T y = 0;
 
     vec2<T> operator+(vec2<T> other);
     vec2<T> operator-(vec2<T> other);
+    vec2<T> operator*(double other);
     T operator[](int index) const;
     T& operator[](int index);
     vec2<T> operator-();
@@ -22,10 +23,10 @@ public:
     operator vec2<float>() const { return {(float) this->x, (float) this->y}; };
     operator vec2<double>() const { return {(double) this->x, (double) this->y}; };
 
-    // Takes a cross product of two 2D vectors (or 3D vectors whose z value = 0) and returns it. `x` and `y` values of a resulting vector are always 0. See 2D vector cross product definition in Computer Graphics.
     vec3<T> cross_product(vec2<T> b);
     T dot_product(vec2<T> b);
     vec2<T> normalize();
+    double magnitude();
 
     vec2<float> rotate(float rad, vec2<float> center);
     std::string to_string();
@@ -50,6 +51,15 @@ vec2<T> vec2<T>::operator-(vec2<T> other)
     return vec2<T> {
         this->x - other.x,
         this->y - other.y
+    };
+}
+
+template <typename T>
+vec2<T> vec2<T>::operator*(double other)
+{
+    return vec2<T> {
+        this->x * other,
+        this->y * other
     };
 }
 
@@ -98,11 +108,17 @@ template <typename T>
 vec2<T> vec2<T>::normalize()
 {
     // casting to double to avoid ambiguity error if T = int
-    double magnitude = std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2));
+    double magnitude = this->magnitude();
     return {
         this->x / magnitude,
         this->y / magnitude
     };
+}
+
+template <typename T>
+double vec2<T>::magnitude()
+{
+    return std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2));
 }
 
 template <typename T>

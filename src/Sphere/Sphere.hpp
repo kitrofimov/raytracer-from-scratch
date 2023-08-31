@@ -6,9 +6,9 @@ class Sphere
 {
 public:
     Sphere(vec3d center, double radius, color_t color);
-    vec3d get_position() { return position; }
-    double get_radius() { return radius; }
-    color_t get_color() { return color; }
+    inline vec3d get_position() { return position; }
+    inline double get_radius() { return radius; }
+    inline color_t get_color() { return color; }
 private:
     vec3d position;
     double radius;
