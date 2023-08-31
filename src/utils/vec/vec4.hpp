@@ -6,13 +6,14 @@ template <typename T>
 struct vec4
 {
 public:
-    T x {0};
-    T y {0};
-    T z {0};
-    T w {0};
+    T x = 0;
+    T y = 0;
+    T z = 0;
+    T w = 0;
 
     vec4<T> operator+(vec4<T> other);
     vec4<T> operator-(vec4<T> other);
+    vec4<T> operator*(double other);
     T operator[](int index) const;
     T& operator[](int index);
     vec4<T> operator-();
@@ -23,6 +24,7 @@ public:
 
     T dot_product(vec4<T> b);
     vec4<T> normalize();
+    double magnitude();
 
     std::string to_string();
 };
@@ -50,6 +52,17 @@ vec4<T> vec4<T>::operator-(vec4<T> other)
         this->y - other.y,
         this->z - other.z,
         this->w - other.w
+    };
+}
+
+template <typename T>
+vec4<T> vec4<T>::operator*(double other)
+{
+    return vec4<T> {
+        this->x * other,
+        this->y * other,
+        this->z * other,
+        this->w * other
     };
 }
 
@@ -94,13 +107,19 @@ template <typename T>
 vec4<T> vec4<T>::normalize()
 {
     // casting to double to avoid ambiguity error if T = int
-    double magnitude = std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2) + std::pow((double) this->z, 2) + std::pow((double) this->w, 2));
+    double magnitude = this->magnitude();
     return {
         this->x / magnitude,
         this->y / magnitude,
         this->z / magnitude,
         this->w / magnitude
     };
+}
+
+template <typename T>
+double vec4<T>::magnitude()
+{
+    return std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2) + std::pow((double) this->z, 2) + std::pow((double) this->w, 2));
 }
 
 template <typename T>

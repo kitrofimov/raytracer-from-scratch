@@ -5,6 +5,7 @@
 #include "Camera/Camera.hpp"
 #include "Scene/Scene.hpp"
 #include "Sphere/Sphere.hpp"
+#include "Light/PointLight/PointLight.hpp"
 
 int main()
 {
@@ -20,7 +21,12 @@ int main()
         std::make_unique<Sphere>((vec3d) {0, 0, 2}, 1, (color_t) {0, 0, 255, 255})
     ));
 
-    Scene scene(std::move(objects));
+    std::vector<std::unique_ptr<Light>> light_sources;
+    light_sources.push_back(std::move(
+        std::make_unique<PointLight>(0.5, (vec3d) {-1, 1, 0})
+    ));
+
+    Scene scene(objects, light_sources);
 
     // For every pixel in the window
     for (int i = 0; i < window_dimensions.y; i++)
@@ -35,6 +41,8 @@ int main()
             window.draw_pixel(ndc, color);
         }
     }
+
+    std::cout << "Rendered!" << std::endl;
 
     unsigned int this_frame_time = 0;
     unsigned int delta_time = 0;

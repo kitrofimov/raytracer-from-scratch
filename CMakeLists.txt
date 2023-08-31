@@ -3,11 +3,24 @@ project(renderer)
 
 set(
   SOURCES
+
   src/main.cpp
+
+  # Main classes
   src/Window/Window.cpp
   src/Camera/Camera.cpp
   src/Scene/Scene.cpp
+
+  # Object classes
   src/Sphere/Sphere.cpp
+
+  # Light classes
+  src/Light/AmbientLight/AmbientLight.cpp
+  src/Light/PointLight/PointLight.cpp
+  src/Light/DirectionalLight/DirectionalLight.cpp
+
+  # Utility classes/structs
+  src/utils/color/color.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")  # force .exe to build/bin

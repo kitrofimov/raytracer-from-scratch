@@ -6,12 +6,13 @@ template <typename T>
 struct vec3
 {
 public:
-    T x {0};
-    T y {0};
-    T z {0};
+    T x = 0;
+    T y = 0;
+    T z = 0;
 
     vec3<T> operator+(vec3<T> other);
     vec3<T> operator-(vec3<T> other);
+    vec3<T> operator*(double other);
     T operator[](int index) const;
     T& operator[](int index);
     vec3<T> operator-();
@@ -23,6 +24,7 @@ public:
     vec3<T> cross_product(vec3<T> b);
     T dot_product(vec3<T> b);
     vec3<T> normalize();
+    double magnitude();
 
     std::string to_string();
 };
@@ -48,6 +50,16 @@ vec3<T> vec3<T>::operator-(vec3<T> other)
         this->x - other.x,
         this->y - other.y,
         this->z - other.z
+    };
+}
+
+template <typename T>
+vec3<T> vec3<T>::operator*(double other)
+{
+    return vec3<T> {
+        this->x * other,
+        this->y * other,
+        this->z * other
     };
 }
 
@@ -99,12 +111,18 @@ template <typename T>
 vec3<T> vec3<T>::normalize()
 {
     // casting to double to avoid ambiguity error if T = int
-    double magnitude = std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2) + std::pow((double) this->z, 2));
+    double magnitude = this->magnitude();
     return {
         this->x / magnitude,
         this->y / magnitude,
         this->z / magnitude
     };
+}
+
+template <typename T>
+double vec3<T>::magnitude()
+{
+    return std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2) + std::pow((double) this->z, 2));
 }
 
 template <typename T>
