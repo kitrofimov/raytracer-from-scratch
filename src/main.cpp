@@ -20,10 +20,15 @@ int main()
 
     // Scene creation
     std::vector<std::unique_ptr<Sphere>> objects;
-    objects.emplace_back(std::make_unique<Sphere>((vec3d) {0, 0, 2}, 1, (color_t) {255, 0, 0, 255}));
+    objects.emplace_back(std::make_unique<Sphere>(
+        (vec3d) {0, 0, 2},
+        1,
+        (color_t) {255, 0, 0, 255},
+        1
+    ));
 
     std::vector<std::unique_ptr<LightSource>> light_sources;
-    light_sources.emplace_back(std::make_unique<DirectionalLight>(1, (vec3d) {1, -1, 1}));
+    light_sources.emplace_back(std::make_unique<DirectionalLight>(0.5, (vec3d) {1, -1, 1}));
     light_sources.emplace_back(std::make_unique<AmbientLight>(0.1));
 
     Scene scene(objects, light_sources);
@@ -34,10 +39,10 @@ int main()
         for (int x = 0; x < window_dimensions.x; x++)
         {
             vec2d ndc = window.pixel_to_ndc({x, y});
-            vec3d point_on_projection_plane = window.ndc_to_projection_plane(ndc, &camera);
-            vec3d ray_direction = (point_on_projection_plane - camera.position).normalize();
+            vec3d point_on_projection_plane = window.ndc_to_projection_plane(ndc, camera);
+            vec3d ray_direction = (point_on_projection_plane - camera.get_position()).normalize();
 
-            color_t color = scene.cast_ray(camera.position, ray_direction);
+            color_t color = scene.cast_ray(camera.get_position(), ray_direction, camera);
             window.draw_pixel(ndc, color);
         }
     }

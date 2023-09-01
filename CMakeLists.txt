@@ -15,6 +15,7 @@ set(
   src/Sphere/Sphere.cpp
 
   # Light classes
+  src/Light/LightSource.cpp
   src/Light/AmbientLight/AmbientLight.cpp
   src/Light/PointLight/PointLight.cpp
   src/Light/DirectionalLight/DirectionalLight.cpp
