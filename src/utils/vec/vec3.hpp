@@ -13,6 +13,7 @@ public:
 
     vec3<T> operator+(vec3<T> other);
     vec3<T> operator-(vec3<T> other);
+    vec3<T> operator*(int other);
     vec3<T> operator*(double other);
     T operator[](int index) const;
     T& operator[](int index);
@@ -51,6 +52,16 @@ vec3<T> vec3<T>::operator-(vec3<T> other)
         this->x - other.x,
         this->y - other.y,
         this->z - other.z
+    };
+}
+
+template <typename T>
+vec3<T> vec3<T>::operator*(int other)
+{
+    return vec3<T> {
+        this->x * other,
+        this->y * other,
+        this->z * other
     };
 }
 

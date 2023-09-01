@@ -14,6 +14,7 @@ public:
 
     vec4<T> operator+(vec4<T> other);
     vec4<T> operator-(vec4<T> other);
+    vec4<T> operator*(int other);
     vec4<T> operator*(double other);
     T operator[](int index) const;
     T& operator[](int index);
@@ -53,6 +54,17 @@ vec4<T> vec4<T>::operator-(vec4<T> other)
         this->y - other.y,
         this->z - other.z,
         this->w - other.w
+    };
+}
+
+template <typename T>
+vec4<T> vec4<T>::operator*(int other)
+{
+    return vec4<T> {
+        this->x * other,
+        this->y * other,
+        this->z * other,
+        this->w * other
     };
 }
 

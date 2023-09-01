@@ -58,12 +58,12 @@ vec2d Window::pixel_to_ndc(vec2i position)
     };
 }
 
-vec3d Window::ndc_to_projection_plane(vec2d ndc, Camera *camera)
+vec3d Window::ndc_to_projection_plane(vec2d ndc, Camera& camera)
 {
     return {
-        -ndc.x * camera->projection_plane_dims.x,
-        -ndc.y * camera->projection_plane_dims.y,
-        camera->d
+        -ndc.x * camera.get_projection_plane_dims().x,
+        -ndc.y * camera.get_projection_plane_dims().y,
+        camera.get_d()
     };
 }
 

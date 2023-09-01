@@ -14,6 +14,7 @@ public:
 
     vec2<T> operator+(vec2<T> other);
     vec2<T> operator-(vec2<T> other);
+    vec2<T> operator*(int other);
     vec2<T> operator*(double other);
     T operator[](int index) const;
     T& operator[](int index);
@@ -51,6 +52,15 @@ vec2<T> vec2<T>::operator-(vec2<T> other)
     return vec2<T> {
         this->x - other.x,
         this->y - other.y
+    };
+}
+
+template <typename T>
+vec2<T> vec2<T>::operator*(int other)
+{
+    return vec2<T> {
+        this->x * other,
+        this->y * other
     };
 }
 
