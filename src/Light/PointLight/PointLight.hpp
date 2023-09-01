@@ -1,8 +1,8 @@
 #pragma once
-#include "Light/Light.hpp"
+#include "Light/LightSource.hpp"
 #include "utils/vec/vec3.hpp"
 
-class PointLight : public Light
+class PointLight : public LightSource
 {
 public:
     PointLight(double intensity, vec3d position);

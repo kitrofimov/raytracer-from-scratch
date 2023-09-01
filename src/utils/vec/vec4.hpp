@@ -1,5 +1,6 @@
 #pragma once
 #include <stdexcept>
+#include <sstream>
 #include "vec3.hpp"
 
 template <typename T>
@@ -125,5 +126,7 @@ double vec4<T>::magnitude()
 template <typename T>
 std::string vec4<T>::to_string()
 {
-    return std::string("vec4(" + this->x + ", " + this->y + ", " + this->z + ", " + this->w + ")");
+    std::ostringstream oss;
+    oss << "vec4(" << this->x << ", " << this->y << ", " << this->z << ", " << this->w << ")";
+    return oss.str();
 }
