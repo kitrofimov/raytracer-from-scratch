@@ -7,6 +7,6 @@ public:
     Camera(vec3d position, vec2d projection_plane_dims, double d);
 
     vec3d position;
-    vec2d projection_plane_dims = {1, 1};
-    double d = 1;
+    vec2d projection_plane_dims;
+    double d;
 };

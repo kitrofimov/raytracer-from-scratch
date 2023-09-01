@@ -1,8 +1,8 @@
 #pragma once
-#include "Light/Light.hpp"
+#include "Light/LightSource.hpp"
 #include "utils/vec/vec3.hpp"
 
-class AmbientLight : public Light
+class AmbientLight : public LightSource
 {
 public:
     AmbientLight(double intensity);

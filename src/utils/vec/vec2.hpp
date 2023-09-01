@@ -139,7 +139,7 @@ vec2f vec2<T>::rotate(float rad, vec2f center)
 template <typename T>
 std::string vec2<T>::to_string()
 {
-    std::ostringstream iss;
-    iss << std::string("vec2(") << this->x << ", " << this->y << ")";
-    return iss.str();
+    std::ostringstream oss;
+    oss << "vec2(" << this->x << ", " << this->y << ")";
+    return oss.str();
 }

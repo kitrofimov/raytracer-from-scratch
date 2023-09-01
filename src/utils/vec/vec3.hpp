@@ -1,6 +1,7 @@
 #pragma once
 #include <stdexcept>
 #include <cmath>
+#include <sstream>
 
 template <typename T>
 struct vec3
@@ -128,5 +129,7 @@ double vec3<T>::magnitude()
 template <typename T>
 std::string vec3<T>::to_string()
 {
-    return std::string("vec3(" + this->x + ", " + this->y + ", " + this->z + ")");
+    std::ostringstream oss;
+    oss << "vec3(" << this->x << ", " << this->y << ", " << this->z << ")";
+    return oss.str();
 }

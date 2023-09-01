@@ -1,11 +1,10 @@
 #include "DirectionalLight.hpp"
 #include "utils/vec/vec3.hpp"
 
-DirectionalLight::DirectionalLight(double intensity, vec3d position, vec3d direction)
+DirectionalLight::DirectionalLight(double intensity, vec3d direction)
 {
     this->intensity = intensity;
-    this->position = position;
-    this->direction = direction;
+    this->direction = direction.normalize();
 }
 
 double DirectionalLight::calculate_intensity(vec3d point, vec3d normal)

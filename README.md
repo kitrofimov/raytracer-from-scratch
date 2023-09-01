@@ -1,13 +1,12 @@
 # raytracer-from-scratch
 
-A raytracer.
+A raytracer, which uses left-hand coordinate system, and in which camera looks in `+Z` direction by default. Visualization of the simple scene I made in GeoGebra: https://www.geogebra.org/calculator/zfexqajh
 
 ## TODO
 New features
 - [x] Add basic raytracing for a sphere (probably should delete `Object` for now, just `Sphere`, because there is no other primitives for now)
-- [ ] Camera looks in the wrong direction?
 - [ ] Add light
-    - [ ] Diffuse Reflection (matte)
+    - [x] Diffuse Reflection (matte)
     - [ ] Specular Reflection (shiny)
     - [ ] Colored light (need to have multiple light intensities)
 - [ ] Add shadows
@@ -16,3 +15,5 @@ New features
 
 Bugfixes/improvements
 - [ ] `Scene::cast_ray` bug (see comment there)
+- [x] `+Y` direction is not upwards (messed up coordinate system)
+- [x] Fix `unsigned char` overflow in `color_t` arithmetic (add 0 and 255 clamping)

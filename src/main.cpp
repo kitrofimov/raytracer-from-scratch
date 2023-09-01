@@ -1,11 +1,14 @@
 #define SDL_MAIN_HANDLED
 #include <iostream>
-#include "utils/vec/vec2.hpp"
+
 #include "Window/Window.hpp"
 #include "Camera/Camera.hpp"
 #include "Scene/Scene.hpp"
+
 #include "Sphere/Sphere.hpp"
-#include "Light/PointLight/PointLight.hpp"
+
+#include "Light/Light.hpp"
+#include "utils/vec/vec.hpp"
 
 int main()
 {
@@ -17,23 +20,20 @@ int main()
 
     // Scene creation
     std::vector<std::unique_ptr<Sphere>> objects;
-    objects.push_back(std::move(
-        std::make_unique<Sphere>((vec3d) {0, 0, 2}, 1, (color_t) {0, 0, 255, 255})
-    ));
+    objects.emplace_back(std::make_unique<Sphere>((vec3d) {0, 0, 2}, 1, (color_t) {255, 0, 0, 255}));
 
-    std::vector<std::unique_ptr<Light>> light_sources;
-    light_sources.push_back(std::move(
-        std::make_unique<PointLight>(0.5, (vec3d) {-1, 1, 0})
-    ));
+    std::vector<std::unique_ptr<LightSource>> light_sources;
+    light_sources.emplace_back(std::make_unique<DirectionalLight>(1, (vec3d) {1, -1, 1}));
+    light_sources.emplace_back(std::make_unique<AmbientLight>(0.1));
 
     Scene scene(objects, light_sources);
 
     // For every pixel in the window
-    for (int i = 0; i < window_dimensions.y; i++)
+    for (int y = 0; y < window_dimensions.y; y++)
     {
-        for (int j = 0; j < window_dimensions.x; j++)
+        for (int x = 0; x < window_dimensions.x; x++)
         {
-            vec2d ndc = window.pixel_to_ndc({j, i});
+            vec2d ndc = window.pixel_to_ndc({x, y});
             vec3d point_on_projection_plane = window.ndc_to_projection_plane(ndc, &camera);
             vec3d ray_direction = (point_on_projection_plane - camera.position).normalize();
 
