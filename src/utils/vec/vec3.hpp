@@ -30,9 +30,9 @@ public:
     std::string to_string();
 };
 
-typedef vec3<int> vec3i;
-typedef vec3<float> vec3f;
-typedef vec3<double> vec3d;
+using vec3i = vec3<int>;
+using vec3f = vec3<float>;
+using vec3d = vec3<double>;
 
 template <typename T>
 vec3<T> vec3<T>::operator+(vec3<T> other)
