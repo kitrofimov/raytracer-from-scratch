@@ -3,7 +3,7 @@
 #include "Scene.hpp"
 #include "Sphere/Sphere.hpp"
 #include "Camera/Camera.hpp"
-#include "utils/vec/vec3.hpp"
+#include "utils/vec/vec.hpp"
 
 Scene::Scene(std::vector<std::unique_ptr<Sphere>> &objects,
              std::vector<std::unique_ptr<LightSource>> &light_sources,
@@ -17,15 +17,15 @@ Scene::Scene(std::vector<std::unique_ptr<Sphere>> &objects,
 // Cast the ray from camera (origin) to specified direction
 //     TODO: if there are more than one object the ray has intersection
 // with, the one rendered is going to be not the one closer, but the one
-// that is first in `objects` vector. need to fix this!
+// that is first in `objects` vector. need to fix this! (some z-buffer?)
 //     TODO: remove magic number constant `1` in `if` statements! (that
 // is near plane distance)
-color_t Scene::cast_ray(vec3d origin, vec3d direction, Camera& camera)
+color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
 {
     for (auto &p_object : this->objects)
     {
         // find the quadratic's discriminant
-        vec3d CO = p_object->get_position() - origin;  // sphere's center -> origin (camera)
+        vec3d CO = p_object->get_position() - camera_pos;  // sphere's center -> camera
         double a = direction.dot_product(direction);
         double b = -2 * (CO.dot_product(direction));
         double c = CO.dot_product(CO) - std::pow(p_object->get_radius(), 2);
@@ -53,20 +53,31 @@ color_t Scene::cast_ray(vec3d origin, vec3d direction, Camera& camera)
                 continue;
         }
 
-        vec3d point = origin + direction * t;  // closest point of intersection
+        vec3d point = camera_pos + direction * t;  // closest point of intersection
         vec3d normal = (point - p_object->get_position()).normalize();
-        double light_intensity = this->calculate_light_intensity(point, normal, camera, p_object);
 
-        return p_object->get_color() * light_intensity;  // blend a color's object with light's intensity
+        return this->calculate_color(point, normal, camera_pos, p_object);
     }
     return this->background_color;
 }
 
 // Calculate light intensity from all light sources at a given point with a given normal
-double Scene::calculate_light_intensity(vec3d point, vec3d normal, Camera camera, std::unique_ptr<Sphere>& p_object)
+color_t Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
+                               std::unique_ptr<Sphere>& p_object)
 {
-    double light_intensity = 0;
-    for (auto &p_light_source : this->light_sources)
-        light_intensity += p_light_source->calculate_intensity(point, normal, camera.get_position(), p_object);
-    return light_intensity;
+    // TODO: bugged code! need to find a way to blend light color with object color
+    // ONLY IF there ARE some light. if no light - I want it to be completely black.
+
+    std::vector<color_t> list(this->light_sources.size() + 1);
+
+    std::size_t i = 0;
+    for (; i < this->light_sources.size(); i++)
+    {
+        auto& p_light_source = this->light_sources[i];
+        list[i] = p_light_source->get_color() * \
+                  p_light_source->calculate_intensity(point, normal, camera_pos, p_object);
+    }
+    list[i] = p_object->get_color();
+
+    return color_t::mix(list);
 }

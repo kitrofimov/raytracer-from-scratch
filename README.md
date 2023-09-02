@@ -8,8 +8,10 @@ New features
 - [ ] Add light
     - [x] Diffuse Reflection (matte)
     - [x] Specular Reflection (shiny)
-    - [ ] Understand mathematical models of Diffuse and Specular reflections
-    - [ ] Colored light (need to have multiple light intensities)
+    - [x] Understand mathematical models of Diffuse and Specular reflections
+    - [x] Colored light (need to have multiple light intensities)
+        - [ ] Test and bigfix it if needed
+            - [ ] `Scene::calculate_color` (comment)
 - [ ] Add shadows
 - [ ] Add reflections
 - [ ] Add other primitives
@@ -19,3 +21,11 @@ Bugfixes/improvements
 - [x] `+Y` direction is not upwards (messed up coordinate system)
 - [x] Fix `unsigned char` overflow in `color_t` arithmetic (add 0 and 255 clamping)
 - [x] Abstract similar code in `PointLight` and `DirectionalLight`'s `calculate_intensity` method
+- [ ] Refactor `vec` structs
+    - [ ] Try to templatize number of elements
+    - [ ] Make operators `friend`s and non-members?
+- [ ] Add `Scene::render`
+- [ ] Configure camera by FOV and near plane distance
+
+Potential bug causes
+- [ ] `alpha` parameter is changing during `color_t` arithmetic

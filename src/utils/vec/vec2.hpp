@@ -14,8 +14,8 @@ public:
 
     vec2<T> operator+(vec2<T> other);
     vec2<T> operator-(vec2<T> other);
-    vec2<T> operator*(int other);
-    vec2<T> operator*(double other);
+    vec2<T> operator*(double scalar);
+    vec2<T> operator/(double scalar);
     T operator[](int index) const;
     T& operator[](int index);
     vec2<T> operator-();
@@ -40,7 +40,7 @@ using vec2d = vec2<double>;
 template <typename T>
 vec2<T> vec2<T>::operator+(vec2<T> other)
 {
-    return vec2<T> {
+    return {
         this->x + other.x,
         this->y + other.y
     };
@@ -49,27 +49,27 @@ vec2<T> vec2<T>::operator+(vec2<T> other)
 template <typename T>
 vec2<T> vec2<T>::operator-(vec2<T> other)
 {
-    return vec2<T> {
+    return {
         this->x - other.x,
         this->y - other.y
     };
 }
 
 template <typename T>
-vec2<T> vec2<T>::operator*(int other)
+vec2<T> vec2<T>::operator*(double scalar)
 {
-    return vec2<T> {
-        this->x * other,
-        this->y * other
+    return {
+        (T) (this->x * scalar),
+        (T) (this->y * scalar)
     };
 }
 
 template <typename T>
-vec2<T> vec2<T>::operator*(double other)
+vec2<T> vec2<T>::operator/(double scalar)
 {
-    return vec2<T> {
-        this->x * other,
-        this->y * other
+    return {
+        (T) (this->x / scalar),
+        (T) (this->y / scalar)
     };
 }
 
