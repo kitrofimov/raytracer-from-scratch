@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <sstream>
 #include "vec3.hpp"
+#include "utils/color/color.hpp"
 
 template <typename T>
 struct vec4
@@ -13,16 +14,20 @@ public:
     T w = 0;
 
     vec4<T> operator+(vec4<T> other);
+    vec4<T> operator+(color_t other);
     vec4<T> operator-(vec4<T> other);
-    vec4<T> operator*(int other);
-    vec4<T> operator*(double other);
+    vec4<T> operator*(double scalar);
+    vec4<T> operator*(color_t other);
+    vec4<T> operator/(double scalar);
     T operator[](int index) const;
     T& operator[](int index);
     vec4<T> operator-();
 
-    operator vec4<int>() const { return vec4<int> {(int) this->x, (int) this->y, (int) this->z, (int) this->w}; };
-    operator vec4<float>() const { return vec4<float> {(float) this->x, (float) this->y, (float) this->z, (float) this->w}; };
-    operator vec4<double>() const { return vec4<double> {(double) this->x, (double) this->y, (double) this->z, (double) this->w}; };
+    operator vec4<int>() const { return (vec4<int>) {(int) this->x, (int) this->y, (int) this->z, (int) this->w}; };
+    operator vec4<float>() const { return (vec4<float>) {(float) this->x, (float) this->y, (float) this->z, (float) this->w}; };
+    operator vec4<double>() const { return (vec4<double>) {(double) this->x, (double) this->y, (double) this->z, (double) this->w}; };
+
+    operator color_t() const { return (color_t) {(unsigned char) this->x, (unsigned char) this->y, (unsigned char) this->z, (unsigned char) this->w}; };
 
     T dot_product(vec4<T> b);
     vec4<T> normalize();
@@ -47,6 +52,17 @@ vec4<T> vec4<T>::operator+(vec4<T> other)
 }
 
 template <typename T>
+vec4<T> vec4<T>::operator+(color_t other)
+{
+    return {
+        this->x + other.r,
+        this->y + other.g,
+        this->z + other.b,
+        this->w + other.a
+    };
+}
+
+template <typename T>
 vec4<T> vec4<T>::operator-(vec4<T> other)
 {
     return {
@@ -58,24 +74,35 @@ vec4<T> vec4<T>::operator-(vec4<T> other)
 }
 
 template <typename T>
-vec4<T> vec4<T>::operator*(int other)
+vec4<T> vec4<T>::operator*(double scalar)
 {
-    return vec4<T> {
-        this->x * other,
-        this->y * other,
-        this->z * other,
-        this->w * other
+    return {
+        (T) (this->x * scalar),
+        (T) (this->y * scalar),
+        (T) (this->z * scalar),
+        (T) (this->w * scalar)
     };
 }
 
 template <typename T>
-vec4<T> vec4<T>::operator*(double other)
+vec4<T> vec4<T>::operator*(color_t other)
 {
-    return vec4<T> {
-        this->x * other,
-        this->y * other,
-        this->z * other,
-        this->w * other
+    return {
+        this->x * other.r,
+        this->y * other.g,
+        this->z * other.b,
+        this->w * other.a
+    };
+}
+
+template <typename T>
+vec4<T> vec4<T>::operator/(double scalar)
+{
+    return {
+        (T) (this->x / scalar),
+        (T) (this->y / scalar),
+        (T) (this->z / scalar),
+        (T) (this->w / scalar)
     };
 }
 

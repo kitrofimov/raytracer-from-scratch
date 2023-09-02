@@ -13,8 +13,8 @@ public:
 
     vec3<T> operator+(vec3<T> other);
     vec3<T> operator-(vec3<T> other);
-    vec3<T> operator*(int other);
-    vec3<T> operator*(double other);
+    vec3<T> operator*(double scalar);
+    vec3<T> operator/(double scalar);
     T operator[](int index) const;
     T& operator[](int index);
     vec3<T> operator-();
@@ -56,22 +56,22 @@ vec3<T> vec3<T>::operator-(vec3<T> other)
 }
 
 template <typename T>
-vec3<T> vec3<T>::operator*(int other)
+vec3<T> vec3<T>::operator*(double scalar)
 {
-    return vec3<T> {
-        this->x * other,
-        this->y * other,
-        this->z * other
+    return {
+        (T) (this->x * scalar),
+        (T) (this->y * scalar),
+        (T) (this->z * scalar)
     };
 }
 
 template <typename T>
-vec3<T> vec3<T>::operator*(double other)
+vec3<T> vec3<T>::operator/(double scalar)
 {
-    return vec3<T> {
-        this->x * other,
-        this->y * other,
-        this->z * other
+    return {
+        (T) (this->x / scalar),
+        (T) (this->y / scalar),
+        (T) (this->z / scalar)
     };
 }
 

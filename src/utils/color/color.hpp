@@ -1,4 +1,9 @@
 #pragma once
+#include <vector>
+
+template <typename T>
+struct vec4;
+using vec4d = vec4<double>;
 
 struct color_t
 {
@@ -15,4 +20,8 @@ struct color_t
 
     unsigned char operator[](int i) const;
     unsigned char& operator[](int i);
+
+    operator vec4d() const;
+
+    static color_t mix(std::vector<color_t> list);
 };

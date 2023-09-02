@@ -1,5 +1,7 @@
 #include <stdexcept>
+#include <vector>
 #include "color.hpp"
+#include "utils/vec/vec4.hpp"
 
 color_t color_t::operator+(color_t other)
 {
@@ -93,4 +95,23 @@ unsigned char& color_t::operator[](int i)
         throw std::out_of_range(std::string("color_t invalid index ") + std::to_string(i));
         break;
     }
+}
+
+color_t::operator vec4d() const
+{
+    return {
+        (double) this->r,
+        (double) this->g,
+        (double) this->b,
+        (double) this->a
+    };
+}
+
+color_t color_t::mix(std::vector<color_t> list)
+{
+    vec4i result = {0, 0, 0, 0};
+    for (auto& color : list)
+        result = result + color;
+    result = result / list.size();
+    return (color_t) result;
 }

@@ -15,7 +15,7 @@ int main()
     // Initialization
     vec2i window_dimensions = {512, 512};
     Window window(window_dimensions);
-    Camera camera({0, 0, 0}, {1, 1}, 1);
+    Camera camera({0, 0, 0}, {1, 1}, 1.5);
     window.clear({0, 0, 0});
 
     // Scene creation
@@ -23,13 +23,24 @@ int main()
     objects.emplace_back(std::make_unique<Sphere>(
         (vec3d) {0, 0, 2},
         1,
-        (color_t) {255, 0, 0, 255},
-        1
+        (color_t) {0, 155, 0, 255}
     ));
 
     std::vector<std::unique_ptr<LightSource>> light_sources;
-    light_sources.emplace_back(std::make_unique<DirectionalLight>(0.5, (vec3d) {1, -1, 1}));
-    light_sources.emplace_back(std::make_unique<AmbientLight>(0.1));
+    light_sources.emplace_back(std::make_unique<DirectionalLight>(
+        1.0,
+        (color_t) {255, 0, 255, 255},
+        (vec3d) {1, -1, 1}
+    ));
+    // light_sources.emplace_back(std::make_unique<PointLight>(
+    //     1.0,
+    //     (color_t) {255, 255, 255, 255},
+    //     (vec3d) {-2, -1, -1}
+    // ));
+    // light_sources.emplace_back(std::make_unique<AmbientLight>(
+    //     0.1,
+    //     (color_t) {255, 255, 255, 255}
+    // ));
 
     Scene scene(objects, light_sources);
 
@@ -42,7 +53,7 @@ int main()
             vec3d point_on_projection_plane = window.ndc_to_projection_plane(ndc, camera);
             vec3d ray_direction = (point_on_projection_plane - camera.get_position()).normalize();
 
-            color_t color = scene.cast_ray(camera.get_position(), ray_direction, camera);
+            color_t color = scene.cast_ray(camera.get_position(), ray_direction);
             window.draw_pixel(ndc, color);
         }
     }
