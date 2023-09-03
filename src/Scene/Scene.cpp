@@ -2,6 +2,7 @@
 #include <cmath>
 #include "Scene.hpp"
 #include "Sphere/Sphere.hpp"
+#include "Window/Window.hpp"
 #include "Camera/Camera.hpp"
 #include "utils/vec/vec.hpp"
 
@@ -12,6 +13,23 @@ Scene::Scene(std::vector<std::unique_ptr<Sphere>> &objects,
     this->objects = std::move(objects);
     this->light_sources = std::move(light_sources);
     this->background_color = background_color;
+}
+
+void Scene::render(Window& window, Camera& camera)
+{
+    // For every pixel in the window
+    for (int y = 0; y < window.get_dimensions().y; y++)
+    {
+        for (int x = 0; x < window.get_dimensions().x; x++)
+        {
+            vec2d ndc = window.pixel_to_ndc({x, y});
+            vec3d point_on_projection_plane = window.ndc_to_projection_plane(ndc, camera);
+            vec3d ray_direction = (point_on_projection_plane - camera.get_position()).normalize();
+
+            color_t color = this->cast_ray(camera.get_position(), ray_direction);
+            window.draw_pixel(ndc, color);
+        }
+    }
 }
 
 // Cast the ray from camera (origin) to specified direction
