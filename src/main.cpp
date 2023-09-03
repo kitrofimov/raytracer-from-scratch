@@ -14,13 +14,13 @@ int main()
 {
     // Initialization
     Window window({512, 512});
-    Camera camera({0, 0, 0}, {1, 1}, 1.5);
+    Camera camera({0, 0, 0}, {0.4, 0.4}, 1);
     window.clear({0, 0, 0});
 
     // Scene creation
     std::vector<std::unique_ptr<Sphere>> objects;
     objects.emplace_back(std::make_unique<Sphere>(
-        (vec3d) {0, 0, 2},
+        (vec3d) {0, 0, 3},
         1,
         (color_t) {0, 155, 0, 255}
     ));
@@ -30,6 +30,11 @@ int main()
         1.0,
         (color_t) {255, 0, 255, 255},
         (vec3d) {1, -1, 1}
+    ));
+    light_sources.emplace_back(std::make_unique<PointLight>(
+        1.0,
+        (color_t) {255, 255, 255, 255},
+        (vec3d) {0, 0, 0}
     ));
 
     Scene scene(objects, light_sources);
