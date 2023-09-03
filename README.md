@@ -2,7 +2,7 @@
 
 A raytracer, which uses left-hand coordinate system, and in which camera looks in `+Z` direction by default. Visualization of the simple scene I made in GeoGebra: https://www.geogebra.org/calculator/zfexqajh
 
-## TODO
+## TODO/NOTES
 New features
 - [x] Add basic raytracing for a sphere (probably should delete `Object` for now, just `Sphere`, because there is no other primitives for now)
 - [ ] Add light
@@ -24,8 +24,8 @@ Bugfixes/improvements
 - [ ] Refactor `vec` structs
     - [ ] Try to templatize number of elements
     - [ ] Make operators `friend`s and non-members?
-- [ ] Add `Scene::render`
-- [ ] Configure camera by FOV and near plane distance
+- [x] Add `Scene::render`
+- [ ] ~~Configure camera by FOV and near plane distance~~ *I think it is useful to specify the dimensions of the projection plane by yourself*
 
 Potential bug causes
 - [ ] `alpha` parameter is changing during `color_t` arithmetic
