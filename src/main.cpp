@@ -8,10 +8,13 @@
 // #include "Sphere/Sphere.hpp"
 
 // #include "Light/Light.hpp"
-#include "utils/vec/vec.hpp"
+#include "utils/vec.hpp"
 
 int main()
 {
+    vec<int, 2> v = {1, 2};
+    std::cout << v << std::endl;
+
     // // Initialization
     // Window window({512, 512});
     // Camera camera({0, 0, 0}, {1, 1}, 1.5);

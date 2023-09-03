@@ -1,6 +1,5 @@
 #pragma once
 #include <array>
-#include "property.hpp"
 
 // =================
 // Class declaration
@@ -18,6 +17,15 @@ public:
 
     T operator[](std::size_t i) const;
     T& operator[](std::size_t i);
+
+    T x() const { return this->data[0]; }
+    T& x() { return this->data[0]; }
+    T y() const { return this->data[1]; }
+    T& y() { return this->data[1]; }
+    T z() const { return this->data[2]; }
+    T& z() { return this->data[2]; }
+    T w() const { return this->data[3]; }
+    T& w() { return this->data[3]; }
 private:
     std::array<T, N> data;
 };
