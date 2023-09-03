@@ -45,11 +45,6 @@ void Window::swap_buffers()
     SDL_RenderPresent(this->sdl_renderer);
 }
 
-bool Window::is_running()
-{
-    return this->running;
-}
-
 vec2d Window::pixel_to_ndc(vec2i position)
 {
     return {
