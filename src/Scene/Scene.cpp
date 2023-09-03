@@ -83,19 +83,15 @@ color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
 color_t Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
                                std::unique_ptr<Sphere>& p_object)
 {
-    // TODO: bugged code! need to find a way to blend light color with object color
-    // ONLY IF there ARE some light. if no light - I want it to be completely black.
-
-    std::vector<color_t> list(this->light_sources.size() + 1);
+    std::vector<color_t> list(this->light_sources.size());
 
     std::size_t i = 0;
     for (; i < this->light_sources.size(); i++)
     {
         auto& p_light_source = this->light_sources[i];
-        list[i] = p_light_source->get_color() * \
+        list[i] = color_t::mix({p_light_source->get_color(), p_object->get_color()}) * \
                   p_light_source->calculate_intensity(point, normal, camera_pos, p_object);
     }
-    list[i] = p_object->get_color();
 
     return color_t::mix(list);
 }
