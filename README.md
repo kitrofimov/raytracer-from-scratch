@@ -25,7 +25,7 @@ Bugfixes/improvements
     - [ ] Try to templatize number of elements
     - [ ] Make operators `friend`s and non-members?
 - [x] Add `Scene::render`
-- [ ] ~~Configure camera by FOV and near plane distance~~ *I think it is useful to specify the dimensions of the projection plane by yourself*
+- [x] ~~Configure camera by FOV and near plane distance~~ *I think it is useful to specify the dimensions of the projection plane by yourself*
 
 Potential bug causes
 - [ ] `alpha` parameter is changing during `color_t` arithmetic
