@@ -12,14 +12,6 @@
 
 int main()
 {
-    vec3i v1 = {1, 2, 3};
-    vec3i v2 = {3, 2, 1};
-    auto v3 = v1 - v2;
-
-    std::cout << (v1 == v2) << std::endl;
-
-    return 0;
-
     // // Initialization
     // Window window({512, 512});
     // Camera camera({0, 0, 0}, {1, 1}, 1.5);
