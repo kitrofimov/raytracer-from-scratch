@@ -20,7 +20,8 @@ Bugfixes/improvements
 - [x] Fix `unsigned char` overflow in `color_t` arithmetic (add 0 and 255 clamping)
 - [x] Abstract similar code in `PointLight` and `DirectionalLight`'s `calculate_intensity` method
 - [x] Add `Scene::render`
-- [ ] Convenient scene parsing from a file (xml, json), so no need to recompile if you change scene
+- [x] Convenient scene parsing from a file (xml, json), so no need to recompile if you change scene
+- [ ] Refactor `vec` structs
 
 Potential bug causes
 - [ ] `alpha` parameter is changing during `color_t` arithmetic

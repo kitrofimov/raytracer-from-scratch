@@ -12,25 +12,25 @@ public:
     T x = 0;
     T y = 0;
 
-    vec2<T> operator+(vec2<T> other);
-    vec2<T> operator-(vec2<T> other);
-    vec2<T> operator*(double scalar);
-    vec2<T> operator/(double scalar);
+    vec2();
+    vec2(T x, T y);
+    vec2(std::vector<T> vector);
+
+    vec2<T> operator+(vec2<T> other) const;
+    vec2<T> operator-(vec2<T> other) const;
+    vec2<T> operator*(double scalar) const;
+    vec2<T> operator/(double scalar) const;
     T operator[](int index) const;
     T& operator[](int index);
-    vec2<T> operator-();
+    vec2<T> operator-() const;
 
-    operator vec2<int>() const { return {(int) this->x, (int) this->y}; };
-    operator vec2<float>() const { return {(float) this->x, (float) this->y}; };
-    operator vec2<double>() const { return {(double) this->x, (double) this->y}; };
+    vec3<T> cross_product(vec2<T> b) const;
+    T dot_product(vec2<T> b) const;
+    vec2<T> normalize() const;
+    double magnitude() const;
 
-    vec3<T> cross_product(vec2<T> b);
-    T dot_product(vec2<T> b);
-    vec2<T> normalize();
-    double magnitude();
-
-    vec2<float> rotate(float rad, vec2<float> center);
-    std::string to_string();
+    vec2<float> rotate(float rad, vec2<float> center) const;
+    std::string to_string() const;
 };
 
 using vec2i = vec2<int>;
@@ -38,7 +38,28 @@ using vec2f = vec2<float>;
 using vec2d = vec2<double>;
 
 template <typename T>
-vec2<T> vec2<T>::operator+(vec2<T> other)
+vec2<T>::vec2()
+{
+    this->x = 0;
+    this->y = 0;
+}
+
+template <typename T>
+vec2<T>::vec2(T x, T y)
+{
+    this->x = x;
+    this->y = y;
+}
+
+template <typename T>
+vec2<T>::vec2(std::vector<T> vector)
+{
+    this->x = vector[0];
+    this->y = vector[1];
+}
+
+template <typename T>
+vec2<T> vec2<T>::operator+(vec2<T> other) const
 {
     return {
         this->x + other.x,
@@ -47,7 +68,7 @@ vec2<T> vec2<T>::operator+(vec2<T> other)
 }
 
 template <typename T>
-vec2<T> vec2<T>::operator-(vec2<T> other)
+vec2<T> vec2<T>::operator-(vec2<T> other) const
 {
     return {
         this->x - other.x,
@@ -56,7 +77,7 @@ vec2<T> vec2<T>::operator-(vec2<T> other)
 }
 
 template <typename T>
-vec2<T> vec2<T>::operator*(double scalar)
+vec2<T> vec2<T>::operator*(double scalar) const
 {
     return {
         (T) (this->x * scalar),
@@ -65,7 +86,7 @@ vec2<T> vec2<T>::operator*(double scalar)
 }
 
 template <typename T>
-vec2<T> vec2<T>::operator/(double scalar)
+vec2<T> vec2<T>::operator/(double scalar) const
 {
     return {
         (T) (this->x / scalar),
@@ -90,7 +111,7 @@ T& vec2<T>::operator[](int index)
 }
 
 template <typename T>
-vec2<T> vec2<T>::operator-()
+vec2<T> vec2<T>::operator-() const
 {
     return {
         -this->x,
@@ -99,7 +120,7 @@ vec2<T> vec2<T>::operator-()
 }
 
 template <typename T>
-vec3<T> vec2<T>::cross_product(vec2<T> b)
+vec3<T> vec2<T>::cross_product(vec2<T> b) const
 {
     return vec3<T> {
         (T) 0,
@@ -109,13 +130,13 @@ vec3<T> vec2<T>::cross_product(vec2<T> b)
 }
 
 template <typename T>
-T vec2<T>::dot_product(vec2<T> b)
+T vec2<T>::dot_product(vec2<T> b) const
 {
     return (this->x * b.x + this->y * b.y);
 }
 
 template <typename T>
-vec2<T> vec2<T>::normalize()
+vec2<T> vec2<T>::normalize() const
 {
     // casting to double to avoid ambiguity error if T = int
     double magnitude = this->magnitude();
@@ -126,13 +147,13 @@ vec2<T> vec2<T>::normalize()
 }
 
 template <typename T>
-double vec2<T>::magnitude()
+double vec2<T>::magnitude() const
 {
     return std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2));
 }
 
 template <typename T>
-vec2f vec2<T>::rotate(float rad, vec2f center)
+vec2f vec2<T>::rotate(float rad, vec2f center) const
 {
     // the idea is to place `center` at the origin of coordinate system,
     // then rotate the vector and place it to the same exact position as it was before
@@ -147,7 +168,7 @@ vec2f vec2<T>::rotate(float rad, vec2f center)
 }
 
 template <typename T>
-std::string vec2<T>::to_string()
+std::string vec2<T>::to_string() const
 {
     std::ostringstream oss;
     oss << "vec2(" << this->x << ", " << this->y << ")";

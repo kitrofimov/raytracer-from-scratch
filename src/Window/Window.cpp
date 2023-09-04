@@ -11,7 +11,7 @@ Window::Window(vec2i dimensions)
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
     {
         std::cout << "Failed to initialize SDL2 library: " << SDL_GetError() << std::endl;
-	    std::exit(SDL2_INIT_FAIL_EXIT_CODE);
+	    std::exit(ERROR_CODE_SDL_INIT_FAIL);
     }
     SDL_CreateWindowAndRenderer(dimensions.x, dimensions.y, 0, &(this->sdl_window), &(this->sdl_renderer));
 }
@@ -47,19 +47,19 @@ void Window::swap_buffers()
 
 vec2d Window::pixel_to_ndc(vec2i position)
 {
-    return {
+    return vec2d(
         (double) position.x / this->dimensions.x * 2 - 1,
         (double) position.y / this->dimensions.y * 2 - 1
-    };
+    );
 }
 
 vec3d Window::ndc_to_projection_plane(vec2d ndc, Camera& camera)
 {
-    return {
+    return vec3d(
         -ndc.x * camera.get_projection_plane_dims().x,
         -ndc.y * camera.get_projection_plane_dims().y,
         camera.get_near_plane()
-    };
+    );
 }
 
 // Uses Normalized Device Coordinates, NDC
