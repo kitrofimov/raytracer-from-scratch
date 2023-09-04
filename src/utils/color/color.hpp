@@ -12,11 +12,15 @@ struct color_t
     unsigned char b = 0;
     unsigned char a = 0;
 
-    color_t operator+(color_t other);
-    color_t operator-(color_t other);
-    color_t operator*(double scalar);
-    color_t operator/(double scalar);
-    color_t operator+=(color_t other);
+    color_t();
+    color_t(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
+    color_t(std::vector<unsigned char> vector);
+
+    color_t operator+(color_t other) const;
+    color_t operator-(color_t other) const;
+    color_t operator*(double scalar) const;
+    color_t operator/(double scalar) const;
+    color_t& operator+=(color_t other);
 
     unsigned char operator[](int i) const;
     unsigned char& operator[](int i);

@@ -6,7 +6,7 @@
 class Sphere
 {
 public:
-    Sphere(vec3d center,
+    Sphere(vec3d position,
            double radius,
            color_t color,
            double shininess = std::numeric_limits<double>::quiet_NaN());

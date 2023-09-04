@@ -3,7 +3,31 @@
 #include "color.hpp"
 #include "utils/vec/vec4.hpp"
 
-color_t color_t::operator+(color_t other)
+color_t::color_t()
+{
+    this->r = 0;
+    this->g = 0;
+    this->b = 0;
+    this->a = 0;
+}
+
+color_t::color_t(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+    this->r = r;
+    this->g = g;
+    this->b = b;
+    this->a = a;
+}
+
+color_t::color_t(std::vector<unsigned char> vector)
+{
+    this->r = vector[0];
+    this->g = vector[1];
+    this->b = vector[2];
+    this->a = vector[3];
+}
+
+color_t color_t::operator+(color_t other) const
 {
     color_t result = {0, 0, 0, 0};
     for (int i = 0; i < 4; i++)
@@ -14,7 +38,7 @@ color_t color_t::operator+(color_t other)
     return result;
 }
 
-color_t color_t::operator-(color_t other)
+color_t color_t::operator-(color_t other) const
 {
     color_t result = {0, 0, 0, 0};
     for (int i = 0; i < 4; i++)
@@ -25,7 +49,7 @@ color_t color_t::operator-(color_t other)
     return result;
 }
 
-color_t color_t::operator*(double scalar)
+color_t color_t::operator*(double scalar) const
 {
     color_t result = {0, 0, 0, 0};
     for (int i = 0; i < 4; i++)
@@ -36,7 +60,7 @@ color_t color_t::operator*(double scalar)
     return result;
 }
 
-color_t color_t::operator/(double scalar)
+color_t color_t::operator/(double scalar) const
 {
     color_t result = {0, 0, 0, 0};
     for (int i = 0; i < 4; i++)
@@ -47,7 +71,7 @@ color_t color_t::operator/(double scalar)
     return result;
 }
 
-color_t color_t::operator+=(color_t other)
+color_t& color_t::operator+=(color_t other)
 {
     *this = *this + other;
     return *this;
