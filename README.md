@@ -22,6 +22,8 @@ Bugfixes/improvements
 - [x] Add `Scene::render`
 - [x] Convenient scene parsing from a file (xml, json), so no need to recompile if you change scene
 - [ ] Refactor `vec` structs
+    - [ ] Pass-by-reference
+- [ ] Refactor `color_t` struct
 - [ ] Refactor header files
 
 Potential bug causes
