@@ -17,29 +17,20 @@ public:
     vec4(T x, T y, T z, T w);
     vec4(std::vector<T> vector);
 
-    vec4<T> operator+(vec4<T> other) const;
-    vec4<T> operator+(color_t other) const;
-    vec4<T> operator-(vec4<T> other) const;
-    vec4<T> operator*(double scalar) const;
-    vec4<T> operator*(color_t other) const;
-    vec4<T> operator/(double scalar) const;
-    T operator[](int index) const;
-    T& operator[](int index);
-    vec4<T> operator-() const;
+    constexpr T operator[](int i) const;
+    constexpr T& operator[](int i);
 
-    operator color_t() const { return (color_t) {(unsigned char) this->x, (unsigned char) this->y, (unsigned char) this->z, (unsigned char) this->w}; };
+    constexpr vec4<T> normalize() const;
+    constexpr double magnitude() const;
 
-    T dot_product(vec4<T> b) const;
-    vec4<T> normalize() const;
-    double magnitude() const;
-
-    std::string to_string() const;
+    constexpr std::string to_string() const;
 };
 
 using vec4i = vec4<int>;
 using vec4f = vec4<float>;
 using vec4d = vec4<double>;
 
+// Construct a `vec4`, initializing values to 0
 template <typename T>
 vec4<T>::vec4()
 {
@@ -49,6 +40,7 @@ vec4<T>::vec4()
     this->w = 0;
 }
 
+// Construct a `vec4` from four values
 template <typename T>
 vec4<T>::vec4(T x, T y, T z, T w)
 {
@@ -58,6 +50,7 @@ vec4<T>::vec4(T x, T y, T z, T w)
     this->w = w;
 }
 
+// Construct a `vec4` from `std::vector`. Assumes that `std::vector` is of size 4
 template <typename T>
 vec4<T>::vec4(std::vector<T> vector)
 {
@@ -68,112 +61,44 @@ vec4<T>::vec4(std::vector<T> vector)
 }
 
 template <typename T>
-vec4<T> vec4<T>::operator+(vec4<T> other) const
+constexpr T vec4<T>::operator[](int i) const
 {
-    return {
-        this->x + other.x,
-        this->y + other.y,
-        this->z + other.z,
-        this->w + other.w
-    };
+    switch (i)
+    {
+    case 0:
+        return this->x;
+    case 1:
+        return this->y;
+    case 2:
+        return this->z;
+    case 3:
+        return this->w;
+    default:
+        throw std::out_of_range("vec4 invalid index " + i);
+    }
 }
 
 template <typename T>
-vec4<T> vec4<T>::operator+(color_t other) const
+constexpr T& vec4<T>::operator[](int i)
 {
-    return {
-        this->x + other.r,
-        this->y + other.g,
-        this->z + other.b,
-        this->w + other.a
-    };
+    switch (i)
+    {
+    case 0:
+        return this->x;
+    case 1:
+        return this->y;
+    case 2:
+        return this->z;
+    case 3:
+        return this->w;
+    default:
+        throw std::out_of_range("vec4 invalid index " + i);
+    }
 }
 
 template <typename T>
-vec4<T> vec4<T>::operator-(vec4<T> other) const
+constexpr vec4<T> vec4<T>::normalize() const
 {
-    return {
-        this->x - other.x,
-        this->y - other.y,
-        this->z - other.z,
-        this->w - other.w
-    };
-}
-
-template <typename T>
-vec4<T> vec4<T>::operator*(double scalar) const
-{
-    return {
-        (T) (this->x * scalar),
-        (T) (this->y * scalar),
-        (T) (this->z * scalar),
-        (T) (this->w * scalar)
-    };
-}
-
-template <typename T>
-vec4<T> vec4<T>::operator*(color_t other) const
-{
-    return {
-        this->x * other.r,
-        this->y * other.g,
-        this->z * other.b,
-        this->w * other.a
-    };
-}
-
-template <typename T>
-vec4<T> vec4<T>::operator/(double scalar) const
-{
-    return {
-        (T) (this->x / scalar),
-        (T) (this->y / scalar),
-        (T) (this->z / scalar),
-        (T) (this->w / scalar)
-    };
-}
-
-template <typename T>
-T vec4<T>::operator[](int index) const
-{
-    if (index == 0) return this->x;
-    else if (index == 1) return this->y;
-    else if (index == 2) return this->z;
-    else if (index == 3) return this->w;
-    throw std::invalid_argument("vec4 invalid index " + index);
-}
-
-template <typename T>
-T& vec4<T>::operator[](int index)
-{
-    if (index == 0) return this->x;
-    else if (index == 1) return this->y;
-    else if (index == 2) return this->z;
-    else if (index == 3) return this->w;
-    throw std::invalid_argument("vec4 invalid index " + index);
-}
-
-template <typename T>
-vec4<T> vec4<T>::operator-() const
-{
-    return {
-        -this->x,
-        -this->y,
-        -this->z,
-        -this->w
-    };
-}
-
-template <typename T>
-T vec4<T>::dot_product(vec4<T> b) const
-{
-    return (this->x * b.x + this->y * b.y + this->z * b.z + this->w * b.w);
-}
-
-template <typename T>
-vec4<T> vec4<T>::normalize() const
-{
-    // casting to double to avoid ambiguity error if T = int
     double magnitude = this->magnitude();
     return {
         this->x / magnitude,
@@ -184,15 +109,104 @@ vec4<T> vec4<T>::normalize() const
 }
 
 template <typename T>
-double vec4<T>::magnitude() const
+constexpr double vec4<T>::magnitude() const
 {
-    return std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2) + std::pow((double) this->z, 2) + std::pow((double) this->w, 2));
+    return std::sqrt(
+        std::pow((double) this->x, 2) + \
+        std::pow((double) this->y, 2) + \
+        std::pow((double) this->z, 2) + \
+        std::pow((double) this->w, 2)
+    );
 }
 
 template <typename T>
-std::string vec4<T>::to_string() const
+constexpr std::string vec4<T>::to_string() const
 {
     std::ostringstream oss;
-    oss << "vec4(" << this->x << ", " << this->y << ", " << this->z << ", " << this->w << ")";
+    oss << "vec4(" << this->x << ", "
+                   << this->y << ", "
+                   << this->z << ", "
+                   << this->w << ")";
     return oss.str();
+}
+
+// Operator overloading
+
+// Addition
+template <typename T>
+constexpr vec4<T> operator+(vec4<T> lhs, vec4<T> rhs)
+{
+    return vec4<T>(
+        lhs.x + rhs.x,
+        lhs.y + rhs.y,
+        lhs.z + rhs.z,
+        lhs.w + rhs.w
+    );
+}
+
+// Subtraction
+template <typename T>
+constexpr vec4<T> operator-(vec4<T> lhs, vec4<T> rhs)
+{
+    return lhs + (-rhs);
+}
+
+// Scalar multiplication
+template <typename T>
+constexpr vec4<T> operator*(vec4<T> lhs, double rhs)
+{
+    return vec4<T>(
+        lhs.x * rhs,
+        lhs.y * rhs,
+        lhs.z * rhs,
+        lhs.w * rhs
+    );
+}
+
+template <typename T>
+constexpr vec4<T> operator*(double lhs, vec4<T> rhs)
+{
+    return rhs * lhs;
+}
+
+// Scalar divide
+template <typename T>
+constexpr vec4<T> operator/(vec4<T> lhs, double rhs)
+{
+    return vec4<T>(
+        lhs.x / rhs,
+        lhs.y / rhs,
+        lhs.z / rhs,
+        lhs.w / rhs
+    );
+}
+
+// Negate
+template <typename T>
+constexpr vec4<T> operator-(vec4<T> lhs)
+{
+    return vec4<T>(
+        -lhs.x,
+        -lhs.y,
+        -lhs.z,
+        -lhs.w
+    );
+}
+
+// Dot product
+template <typename T>
+constexpr T operator*(vec4<T> lhs, vec4<T> rhs)
+{
+    return lhs.x * rhs.x + \
+           lhs.y * rhs.y + \
+           lhs.z * rhs.z + \
+           lhs.w * rhs.w;
+}
+
+// Stream insertion operator
+template <typename T>
+constexpr std::ostream& operator<<(std::ostream& stream, const vec4<T>& vec)
+{
+    stream << vec.to_string();
+    return stream;
 }

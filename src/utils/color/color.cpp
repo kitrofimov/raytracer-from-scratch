@@ -27,6 +27,15 @@ color_t::color_t(std::vector<unsigned char> vector)
     this->a = vector[3];
 }
 
+template <typename T>
+color_t::color_t(vec4<T> vec)
+{
+    this->r = (unsigned char) vec.x;
+    this->g = (unsigned char) vec.y;
+    this->b = (unsigned char) vec.z;
+    this->a = (unsigned char) vec.w;
+}
+
 color_t color_t::operator+(color_t other) const
 {
     color_t result = {0, 0, 0, 0};
@@ -94,7 +103,7 @@ unsigned char color_t::operator[](int i) const
         return this->a;
         break;
     default:
-        throw std::out_of_range(std::string("color_t invalid index ") + std::to_string(i));
+        throw std::out_of_range("color_t invalid index " + i);
         break;
     }
 }
@@ -116,18 +125,19 @@ unsigned char& color_t::operator[](int i)
         return this->a;
         break;
     default:
-        throw std::out_of_range(std::string("color_t invalid index ") + std::to_string(i));
+        throw std::out_of_range("color_t invalid index " + i);
         break;
     }
 }
 
-color_t::operator vec4d() const
+template <typename T>
+color_t::operator vec4<T>() const
 {
-    return {
-        (double) this->r,
-        (double) this->g,
-        (double) this->b,
-        (double) this->a
+    return vec4<T>{
+        (T) this->r,
+        (T) this->g,
+        (T) this->b,
+        (T) this->a
     };
 }
 
@@ -135,7 +145,7 @@ color_t color_t::mix(std::vector<color_t> list)
 {
     vec4i result = {0, 0, 0, 0};
     for (auto& color : list)
-        result = result + color;
+        result = result + (vec4i) color;
     result = result / list.size();
-    return (color_t) result;
+    return color_t(result);
 }

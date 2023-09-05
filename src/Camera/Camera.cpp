@@ -1,5 +1,5 @@
 #include "Camera.hpp"
-#include "utils/vec/vec2.hpp"
+#include "utils/vec/vec.hpp"
 
 Camera::Camera(vec3d position, vec2d projection_plane_dims, double near_plane)
 {

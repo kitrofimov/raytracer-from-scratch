@@ -165,9 +165,9 @@ color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
     {
         // find the quadratic's discriminant
         vec3d CO = p_object->get_position() - camera_pos;  // sphere's center -> camera
-        double a = direction.dot_product(direction);
-        double b = -2 * (CO.dot_product(direction));
-        double c = CO.dot_product(CO) - std::pow(p_object->get_radius(), 2);
+        double a = direction * direction;
+        double b = -2 * (CO * direction);
+        double c = (CO * CO) - std::pow(p_object->get_radius(), 2);
         double D = b*b - 4.0*a*c;
 
         if (D < 0) continue;  // no intersections at all
