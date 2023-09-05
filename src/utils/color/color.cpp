@@ -103,7 +103,7 @@ unsigned char color_t::operator[](int i) const
         return this->a;
         break;
     default:
-        throw std::out_of_range(std::string("color_t invalid index ") + std::to_string(i));
+        throw std::out_of_range("color_t invalid index " + i);
         break;
     }
 }
@@ -125,7 +125,7 @@ unsigned char& color_t::operator[](int i)
         return this->a;
         break;
     default:
-        throw std::out_of_range(std::string("color_t invalid index ") + std::to_string(i));
+        throw std::out_of_range("color_t invalid index " + i);
         break;
     }
 }
