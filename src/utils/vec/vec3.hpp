@@ -1,7 +1,8 @@
 #pragma once
 #include <stdexcept>
-#include <cmath>
+#include <string>
 #include <sstream>
+#include <cmath>
 #include <vector>
 
 template <typename T>
@@ -16,26 +17,21 @@ public:
     vec3(T x, T y, T z);
     vec3(std::vector<T> vector);
 
-    vec3<T> operator+(vec3<T> other) const;
-    vec3<T> operator-(vec3<T> other) const;
-    vec3<T> operator*(double scalar) const;
-    vec3<T> operator/(double scalar) const;
-    T operator[](int index) const;
-    T& operator[](int index);
-    vec3<T> operator-() const;
+    constexpr T operator[](int i) const;
+    constexpr T& operator[](int i);
 
-    vec3<T> cross_product(vec3<T> b) const;
-    T dot_product(vec3<T> b) const;
-    vec3<T> normalize() const;
-    double magnitude() const;
+    constexpr vec3<T> cross_product(vec3<T> rhs) const;
+    constexpr vec3<T> normalize() const;
+    constexpr double magnitude() const;
 
-    std::string to_string() const;
+    constexpr std::string to_string() const;
 };
 
 using vec3i = vec3<int>;
 using vec3f = vec3<float>;
 using vec3d = vec3<double>;
 
+// Construct a `vec3`, initializing values to 0
 template <typename T>
 vec3<T>::vec3()
 {
@@ -44,6 +40,7 @@ vec3<T>::vec3()
     this->z = 0;
 }
 
+// Construct a `vec3` from three values
 template <typename T>
 vec3<T>::vec3(T x, T y, T z)
 {
@@ -52,6 +49,7 @@ vec3<T>::vec3(T x, T y, T z)
     this->z = z;
 }
 
+// Construct a `vec3` from `std::vector`. Assumes that `std::vector` is of size 3
 template <typename T>
 vec3<T>::vec3(std::vector<T> vector)
 {
@@ -61,93 +59,50 @@ vec3<T>::vec3(std::vector<T> vector)
 }
 
 template <typename T>
-vec3<T> vec3<T>::operator+(vec3<T> other) const
+constexpr T vec3<T>::operator[](int i) const
 {
-    return {
-        this->x + other.x,
-        this->y + other.y,
-        this->z + other.z
-    };
+    switch (i)
+    {
+    case 0:
+        return this->x;
+    case 1:
+        return this->y;
+    case 2:
+        return this->z;
+    default:
+        throw std::out_of_range("vec3 invalid index " + i);
+    }
 }
 
 template <typename T>
-vec3<T> vec3<T>::operator-(vec3<T> other) const
+constexpr T& vec3<T>::operator[](int i)
 {
-    return {
-        this->x - other.x,
-        this->y - other.y,
-        this->z - other.z
-    };
+    switch (i)
+    {
+    case 0:
+        return this->x;
+    case 1:
+        return this->y;
+    case 2:
+        return this->z;
+    default:
+        throw std::out_of_range("vec3 invalid index " + i);
+    }
 }
 
 template <typename T>
-vec3<T> vec3<T>::operator*(double scalar) const
+constexpr vec3<T> vec3<T>::cross_product(vec3<T> rhs) const
 {
-    return {
-        (T) (this->x * scalar),
-        (T) (this->y * scalar),
-        (T) (this->z * scalar)
-    };
+    return vec3<T>(
+        this->y * rhs.z - this->z * rhs.y,
+        this->z * rhs.x - this->x * rhs.z,
+        this->x * rhs.y - this->y * rhs.x
+    );
 }
 
 template <typename T>
-vec3<T> vec3<T>::operator/(double scalar) const
+constexpr vec3<T> vec3<T>::normalize() const
 {
-    return {
-        (T) (this->x / scalar),
-        (T) (this->y / scalar),
-        (T) (this->z / scalar)
-    };
-}
-
-template <typename T>
-T vec3<T>::operator[](int index) const
-{
-    if (index == 0) return this->x;
-    else if (index == 1) return this->y;
-    else if (index == 2) return this->z;
-    throw std::invalid_argument("vec3 invalid index " + index);
-}
-
-template <typename T>
-T& vec3<T>::operator[](int index)
-{
-    if (index == 0) return this->x;
-    else if (index == 1) return this->y;
-    else if (index == 2) return this->z;
-    throw std::invalid_argument("vec3 invalid index " + index);
-}
-
-template <typename T>
-vec3<T> vec3<T>::operator-() const
-{
-    return {
-        -this->x,
-        -this->y,
-        -this->z
-    };
-}
-
-template <typename T>
-vec3<T> vec3<T>::cross_product(vec3<T> b) const
-{
-    return vec3<T> {
-        this->y * b.z - this->z * b.y,
-        this->z * b.x - this->x * b.z,
-        this->x * b.y - this->y * b.x
-    };
-}
-
-template <typename T>
-T vec3<T>::dot_product(vec3<T> b) const
-{
-    return (this->x * b.x + this->y * b.y + this->z * b.z);
-}
-
-template <typename T>
-vec3<T> vec3<T>::normalize() const
-{
-    // casting to double to avoid ambiguity error if T = int
     double magnitude = this->magnitude();
     return {
         this->x / magnitude,
@@ -157,15 +112,95 @@ vec3<T> vec3<T>::normalize() const
 }
 
 template <typename T>
-double vec3<T>::magnitude() const
+constexpr double vec3<T>::magnitude() const
 {
-    return std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2) + std::pow((double) this->z, 2));
+    return std::sqrt(
+        std::pow((double) this->x, 2) + \
+        std::pow((double) this->y, 2) + \
+        std::pow((double) this->z, 2)
+    );
 }
 
 template <typename T>
-std::string vec3<T>::to_string() const
+constexpr std::string vec3<T>::to_string() const
 {
     std::ostringstream oss;
     oss << "vec3(" << this->x << ", " << this->y << ", " << this->z << ")";
     return oss.str();
+}
+
+// Operator overloading
+
+// Addition
+template <typename T>
+constexpr vec3<T> operator+(vec3<T> lhs, vec3<T> rhs)
+{
+    return vec3<T>(
+        lhs.x + rhs.x,
+        lhs.y + rhs.y,
+        lhs.z + rhs.z
+    );
+}
+
+// Subtraction
+template <typename T>
+constexpr vec3<T> operator-(vec3<T> lhs, vec3<T> rhs)
+{
+    return lhs + (-rhs);
+}
+
+// Scalar multiplication
+template <typename T>
+constexpr vec3<T> operator*(vec3<T> lhs, double rhs)
+{
+    return vec3<T>(
+        lhs.x * rhs,
+        lhs.y * rhs,
+        lhs.z * rhs
+    );
+}
+
+template <typename T>
+constexpr vec3<T> operator*(double lhs, vec3<T> rhs)
+{
+    return rhs * lhs;
+}
+
+// Scalar divide
+template <typename T>
+constexpr vec3<T> operator/(vec3<T> lhs, double rhs)
+{
+    return vec3<T>(
+        lhs.x / rhs,
+        lhs.y / rhs,
+        lhs.z / rhs
+    );
+}
+
+// Negate
+template <typename T>
+constexpr vec3<T> operator-(vec3<T> lhs)
+{
+    return vec3<T>(
+        -lhs.x,
+        -lhs.y,
+        -lhs.z
+    );
+}
+
+// Dot product
+template <typename T>
+constexpr T operator*(vec3<T> lhs, vec3<T> rhs)
+{
+    return lhs.x * rhs.x + \
+           lhs.y * rhs.y + \
+           lhs.z * rhs.z;
+}
+
+// Stream insertion operator
+template <typename T>
+constexpr std::ostream& operator<<(std::ostream& stream, const vec3<T>& vec)
+{
+    stream << vec.to_string();
+    return stream;
 }

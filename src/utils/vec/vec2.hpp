@@ -95,7 +95,10 @@ constexpr vec2<T> vec2<T>::normalize() const
 template <typename T>
 constexpr double vec2<T>::magnitude() const
 {
-    return std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2));
+    return std::sqrt(
+        std::pow((double) this->x, 2) + \
+        std::pow((double) this->y, 2)
+    );
 }
 
 template <typename T>
@@ -178,7 +181,8 @@ constexpr vec2<T> operator-(vec2<T> lhs)
 template <typename T>
 constexpr T operator*(vec2<T> lhs, vec2<T> rhs)
 {
-    return lhs.x * rhs.x + lhs.y * rhs.y;
+    return lhs.x * rhs.x + \
+           lhs.y * rhs.y;
 }
 
 // Stream insertion operator
