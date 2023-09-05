@@ -4,9 +4,6 @@
 #include "Window/Window.hpp"
 #include "Camera/Camera.hpp"
 #include "Scene/Scene.hpp"
-#include "Sphere/Sphere.hpp"
-#include "Light/Light.hpp"
-
 #include "utils/vec/vec.hpp"
 #include "constants.hpp"
 
