@@ -118,7 +118,8 @@ template <typename T>
 constexpr std::string vec2<T>::to_string() const
 {
     std::ostringstream oss;
-    oss << "vec2(" << this->x << ", " << this->y << ")";
+    oss << "vec2(" << this->x << ", "
+                   << this->y << ")";
     return oss.str();
 }
 

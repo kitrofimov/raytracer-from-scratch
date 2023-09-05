@@ -3,7 +3,6 @@
 
 template <typename T>
 struct vec4;
-using vec4d = vec4<double>;
 
 struct color_t
 {
@@ -15,6 +14,8 @@ struct color_t
     color_t();
     color_t(unsigned char r, unsigned char g, unsigned char b, unsigned char a);
     color_t(std::vector<unsigned char> vector);
+    template <typename T>
+    color_t(vec4<T> vec);
 
     color_t operator+(color_t other) const;
     color_t operator-(color_t other) const;
@@ -22,10 +23,11 @@ struct color_t
     color_t operator/(double scalar) const;
     color_t& operator+=(color_t other);
 
+    template <typename T>
+    operator vec4<T>() const;
+
     unsigned char operator[](int i) const;
     unsigned char& operator[](int i);
-
-    operator vec4d() const;
 
     static color_t mix(std::vector<color_t> list);
 };
