@@ -22,6 +22,7 @@ Bugfixes/improvements
 - [x] Add `Scene::render`
 - [x] Convenient scene parsing from a file (xml, json), so no need to recompile if you change scene
 - [ ] Refactor `vec` structs
+- [ ] Refactor header files
 
 Potential bug causes
 - [ ] `alpha` parameter is changing during `color_t` arithmetic

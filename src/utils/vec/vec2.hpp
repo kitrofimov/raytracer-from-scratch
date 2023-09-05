@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 #include <cmath>
-#include "vec3.hpp"
+#include <vector>
 
 template <typename T>
 struct vec2
@@ -16,27 +16,21 @@ public:
     vec2(T x, T y);
     vec2(std::vector<T> vector);
 
-    vec2<T> operator+(vec2<T> other) const;
-    vec2<T> operator-(vec2<T> other) const;
-    vec2<T> operator*(double scalar) const;
-    vec2<T> operator/(double scalar) const;
-    T operator[](int index) const;
-    T& operator[](int index);
-    vec2<T> operator-() const;
+    constexpr T operator[](int i) const;
+    constexpr T& operator[](int i);
 
-    vec3<T> cross_product(vec2<T> b) const;
-    T dot_product(vec2<T> b) const;
-    vec2<T> normalize() const;
-    double magnitude() const;
+    constexpr vec2<T> normalize() const;
+    constexpr double magnitude() const;
+    constexpr vec2<T> rotate(double rad, vec2<T> center) const;
 
-    vec2<float> rotate(float rad, vec2<float> center) const;
-    std::string to_string() const;
+    constexpr std::string to_string() const;
 };
 
 using vec2i = vec2<int>;
 using vec2f = vec2<float>;
 using vec2d = vec2<double>;
 
+// Construct a `vec2`, initializing values to 0
 template <typename T>
 vec2<T>::vec2()
 {
@@ -44,6 +38,7 @@ vec2<T>::vec2()
     this->y = 0;
 }
 
+// Construct a `vec2` from two values
 template <typename T>
 vec2<T>::vec2(T x, T y)
 {
@@ -51,6 +46,7 @@ vec2<T>::vec2(T x, T y)
     this->y = y;
 }
 
+// Construct a `vec2` from `std::vector`. Assumes that `std::vector` is of size 2
 template <typename T>
 vec2<T>::vec2(std::vector<T> vector)
 {
@@ -59,118 +55,136 @@ vec2<T>::vec2(std::vector<T> vector)
 }
 
 template <typename T>
-vec2<T> vec2<T>::operator+(vec2<T> other) const
+constexpr T vec2<T>::operator[](int i) const
 {
-    return {
-        this->x + other.x,
-        this->y + other.y
-    };
+    switch (i)
+    {
+    case 0:
+        return this->x;
+    case 1:
+        return this->y;
+    default:
+        throw std::out_of_range("vec2 invalid index " + i);
+    }
 }
 
 template <typename T>
-vec2<T> vec2<T>::operator-(vec2<T> other) const
+constexpr T& vec2<T>::operator[](int i)
 {
-    return {
-        this->x - other.x,
-        this->y - other.y
-    };
+    switch (i)
+    {
+    case 0:
+        return this->x;
+    case 1:
+        return this->y;
+    default:
+        throw std::out_of_range("vec2 invalid index " + i);
+    }
 }
 
 template <typename T>
-vec2<T> vec2<T>::operator*(double scalar) const
+constexpr vec2<T> vec2<T>::normalize() const
 {
-    return {
-        (T) (this->x * scalar),
-        (T) (this->y * scalar)
-    };
-}
-
-template <typename T>
-vec2<T> vec2<T>::operator/(double scalar) const
-{
-    return {
-        (T) (this->x / scalar),
-        (T) (this->y / scalar)
-    };
-}
-
-template <typename T>
-T vec2<T>::operator[](int index) const
-{
-    if (index == 0) return this->x;
-    else if (index == 1) return this->y;
-    throw std::invalid_argument("vec2 invalid index " + index);
-}
-
-template <typename T>
-T& vec2<T>::operator[](int index)
-{
-    if (index == 0) return this->x;
-    else if (index == 1) return this->y;
-    throw std::invalid_argument("vec2 invalid index " + index);
-}
-
-template <typename T>
-vec2<T> vec2<T>::operator-() const
-{
-    return {
-        -this->x,
-        -this->y
-    };
-}
-
-template <typename T>
-vec3<T> vec2<T>::cross_product(vec2<T> b) const
-{
-    return vec3<T> {
-        (T) 0,
-        (T) 0,
-        this->x * b.y - this->y * b.x
-    };
-}
-
-template <typename T>
-T vec2<T>::dot_product(vec2<T> b) const
-{
-    return (this->x * b.x + this->y * b.y);
-}
-
-template <typename T>
-vec2<T> vec2<T>::normalize() const
-{
-    // casting to double to avoid ambiguity error if T = int
     double magnitude = this->magnitude();
-    return {
+    return vec2<T>(
         this->x / magnitude,
         this->y / magnitude
-    };
+    );
 }
 
 template <typename T>
-double vec2<T>::magnitude() const
+constexpr double vec2<T>::magnitude() const
 {
     return std::sqrt(std::pow((double) this->x, 2) + std::pow((double) this->y, 2));
 }
 
 template <typename T>
-vec2f vec2<T>::rotate(float rad, vec2f center) const
+constexpr vec2<T> vec2<T>::rotate(double rad, vec2<T> center) const
 {
-    // the idea is to place `center` at the origin of coordinate system,
-    // then rotate the vector and place it to the same exact position as it was before
-    vec2f temp = {this->x - center.x, this->y - center.y};
-    vec2f result = {
+    vec2<T> temp = {this->x - center.x, this->y - center.y};  // place center at the origin
+    vec2<T> result = {  // rotate
         (temp.x * std::cos(rad)) - (temp.y * std::sin(rad)),
         (temp.x * std::sin(rad)) + (temp.y * std::cos(rad))
     };
-    result.x += center.x;
+    result.x += center.x;  // place them where they were before
     result.y += center.y;
     return result;
 }
 
 template <typename T>
-std::string vec2<T>::to_string() const
+constexpr std::string vec2<T>::to_string() const
 {
     std::ostringstream oss;
     oss << "vec2(" << this->x << ", " << this->y << ")";
     return oss.str();
+}
+
+// Operator overloading
+
+// Addition
+template <typename T>
+constexpr vec2<T> operator+(vec2<T> lhs, vec2<T> rhs)
+{
+    return vec2<T>(
+        lhs.x + rhs.x,
+        lhs.y + rhs.y
+    );
+}
+
+// Subtraction
+template <typename T>
+constexpr vec2<T> operator-(vec2<T> lhs, vec2<T> rhs)
+{
+    return lhs + (-rhs);
+}
+
+// Scalar multiplication
+template <typename T>
+constexpr vec2<T> operator*(vec2<T> lhs, double rhs)
+{
+    return vec2<T>(
+        lhs.x * rhs,
+        lhs.y * rhs
+    );
+}
+
+template <typename T>
+constexpr vec2<T> operator*(double lhs, vec2<T> rhs)
+{
+    return rhs * lhs;
+}
+
+// Scalar divide
+template <typename T>
+constexpr vec2<T> operator/(vec2<T> lhs, double rhs)
+{
+    return vec2<T>(
+        lhs.x / rhs,
+        lhs.y / rhs
+    );
+}
+
+// Negate
+template <typename T>
+constexpr vec2<T> operator-(vec2<T> lhs)
+{
+    return vec2<T>(
+        -lhs.x
+        -lhs.y
+    );
+}
+
+// Dot product
+template <typename T>
+constexpr T operator*(vec2<T> lhs, vec2<T> rhs)
+{
+    return lhs.x * rhs.x + lhs.y * rhs.y;
+}
+
+// Stream insertion operator
+template <typename T>
+constexpr std::ostream& operator<<(std::ostream& stream, const vec2<T>& vec)
+{
+    stream << vec.to_string();
+    return stream;
 }

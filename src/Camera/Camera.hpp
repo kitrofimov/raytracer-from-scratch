@@ -1,5 +1,5 @@
 #pragma once
-#include "utils/vec/vec2.hpp"
+#include "utils/vec/vec.hpp"
 
 class Camera
 {
