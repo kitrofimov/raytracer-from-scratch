@@ -9,7 +9,7 @@ New features
 - [ ] Add other primitives
 
 Bugfixes/improvements
-- [ ] `Scene::cast_ray` bug (see comment there)
+- [x] `Scene::cast_ray` bug
 
 Potential bug causes
 - [ ] `alpha` parameter is changing during `color_t` arithmetic

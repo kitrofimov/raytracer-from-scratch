@@ -154,11 +154,10 @@ void Scene::render(Window& window, Camera& camera)
 }
 
 // Cast the ray from camera (origin) to specified direction
-//     TODO: if there are more than one object the ray has intersection
-// with, the one rendered is going to be not the one closer, but the one
-// that is first in `objects` vector. need to fix this! (some z-buffer?)
 color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
 {
+    std::map<double, color_t> t_buffer;
+
     for (auto &p_object : this->objects)
     {
         double t = this->find_closest_intersection(camera_pos, direction, p_object);
@@ -168,9 +167,15 @@ color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
         vec3d point = camera_pos + direction * t;  // closest point of intersection
         vec3d normal = (point - p_object->get_position()).normalize();
 
-        return this->calculate_color(point, normal, camera_pos, p_object);
+        t_buffer[t] = this->calculate_color(point, normal, camera_pos, p_object);
     }
-    return this->background_color;
+
+    // if no intersections at all
+    if (t_buffer.size() == 0)
+        return this->background_color;
+
+    // there are some intersections (maybe multiple of them, so find the closest one)
+    return t_buffer[t_buffer.begin()->first];
 }
 
 // Solve a quadratic to find distance to closest intersection with an object (Sphere)
