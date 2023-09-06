@@ -180,12 +180,13 @@ color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
 
 // Solve a quadratic to find distance to closest intersection with an object (Sphere)
 // Returns quiet NaN to show that there is no intersections at all or they are behind the camera
+// Ignores t = 0!!!
 double Scene::find_closest_intersection(vec3d& point, vec3d& direction, std::unique_ptr<Sphere>& p_object)
 {
     // find the discriminant
-    vec3d CO = p_object->get_position() - point;  // sphere's center -> point
+    vec3d CO = point - p_object->get_position();  // sphere's center -> point
     double a = direction * direction;
-    double b = -2 * (CO * direction);
+    double b = 2 * (CO * direction);
     double c = (CO * CO) - std::pow(p_object->get_radius(), 2);
     double D = b*b - 4.0*a*c;
 
@@ -193,25 +194,18 @@ double Scene::find_closest_intersection(vec3d& point, vec3d& direction, std::uni
 
     // solve the quadratic for the smallest POSITIVE root
     // (we don't need anything that is behind us!)
-    double tm = (-b - std::sqrt(D)) / 2*a;
-    double tp = (-b + std::sqrt(D)) / 2*a;
-    double t;
-    if (tm < tp)
+    double t = (-b - std::sqrt(D)) / 2*a;
+    if (t > 0)
+        return t;
+    else if (t == 0)  // if intersection is this point, then compute other root
     {
-        if (tm > 1)
-            t = tm;
-        else  // behind the camera
+        t = (-b + std::sqrt(D)) / 2*a;
+        if (t == 0)  // if it is still 0 (D == 0), then return qNaN
             return qNaN;
     }
-    else  // (tp < tm)
-    {
-        if (tp > 1)
-            t = tp;
-        else  // behind the camera
-            return qNaN;
-    }
-
-    return t;
+    else  // intersection is behind (t < 0)
+        return qNaN;
+    return;
 }
 
 // Calculate light intensity from all light sources at a given point with a given normal
@@ -246,7 +240,8 @@ bool Scene::in_shadow(vec3d& point, std::unique_ptr<LightSource>& p_light_source
     {
         for (auto& p_object : this->objects)
         {
-            if (!std::isnan(this->find_closest_intersection(point, L, p_object)))
+            double t = this->find_closest_intersection(point, L, p_object);
+            if (!std::isnan(t))
                 return true;
         }
         return false;
