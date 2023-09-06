@@ -203,6 +203,22 @@ constexpr T operator*(vec4<T> lhs, vec4<T> rhs)
            lhs.w * rhs.w;
 }
 
+// Comparison
+template <typename T>
+constexpr T operator==(vec4<T> lhs, vec4<T> rhs)
+{
+    return lhs.x == rhs.x && \
+           lhs.y == rhs.y && \
+           lhs.z == rhs.z && \
+           lhs.w == rhs.w;
+}
+
+template <typename T>
+constexpr T operator!=(vec4<T> lhs, vec4<T> rhs)
+{
+    return !(lhs == rhs);
+}
+
 // Stream insertion operator
 template <typename T>
 constexpr std::ostream& operator<<(std::ostream& stream, const vec4<T>& vec)

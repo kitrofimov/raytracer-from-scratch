@@ -6,8 +6,7 @@ class PointLight : public LightSource
 {
 public:
     PointLight(double intensity, color_t color, vec3d position);
-    double calculate_intensity(vec3d& point, vec3d& normal, vec3d& camera_pos,
-                               std::unique_ptr<Sphere>& p_object) override;
+    vec3d get_point_to_light_source_vector(vec3d& point) override;
     inline vec3d get_position() { return position; }
 private:
     vec3d position;

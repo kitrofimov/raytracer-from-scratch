@@ -2,7 +2,14 @@
     "objects": [
         {
             "type": "Sphere",
-            "position": [0, 0, 3],
+            "position": [0, 0, 4],
+            "radius": 1,
+            "color": [155, 0, 0, 255],
+            "shininess": 10
+        },
+        {
+            "type": "Sphere",
+            "position": [0, 0, 2],
             "radius": 1,
             "color": [0, 155, 0, 255],
             "shininess": 10

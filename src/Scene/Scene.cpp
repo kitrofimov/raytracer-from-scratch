@@ -61,7 +61,7 @@ Scene::Scene(std::filesystem::path scene_file_path)
             }
             catch (const json::type_error& e)  // if NaN (string)
             {
-                shininess = std::numeric_limits<double>::quiet_NaN();
+                shininess = qNaN;
             }
 
             objects.emplace_back(std::make_unique<Sphere>(
@@ -157,40 +157,13 @@ void Scene::render(Window& window, Camera& camera)
 //     TODO: if there are more than one object the ray has intersection
 // with, the one rendered is going to be not the one closer, but the one
 // that is first in `objects` vector. need to fix this! (some z-buffer?)
-//     TODO: remove magic number constant `1` in `if` statements! (that
-// is near plane distance)
 color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
 {
     for (auto &p_object : this->objects)
     {
-        // find the quadratic's discriminant
-        vec3d CO = p_object->get_position() - camera_pos;  // sphere's center -> camera
-        double a = direction * direction;
-        double b = -2 * (CO * direction);
-        double c = (CO * CO) - std::pow(p_object->get_radius(), 2);
-        double D = b*b - 4.0*a*c;
-
-        if (D < 0) continue;  // no intersections at all
-
-        // solve the quadratic for the smallest POSITIVE root
-        // (we don't need anything that is behind us!)
-        double tm = (-b - std::sqrt(D)) / 2*a;
-        double tp = (-b + std::sqrt(D)) / 2*a;
-        double t;
-        if (tm < tp)
-        {
-            if (tm > 1)
-                t = tm;
-            else  // behind the camera
-                continue;
-        }
-        else  // (tp < tm)
-        {
-            if (tp > 1)
-                t = tp;
-            else  // behind the camera
-                continue;
-        }
+        double t = this->find_closest_intersection(camera_pos, direction, p_object);
+        if (std::isnan(t))  // if no suitable intersections
+            continue;
 
         vec3d point = camera_pos + direction * t;  // closest point of intersection
         vec3d normal = (point - p_object->get_position()).normalize();
@@ -200,19 +173,77 @@ color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
     return this->background_color;
 }
 
+// Solve a quadratic to find distance to closest intersection with an object (Sphere)
+// Returns quiet NaN to show that there is no intersections at all or they are behind the camera
+double Scene::find_closest_intersection(vec3d& point, vec3d& direction, std::unique_ptr<Sphere>& p_object)
+{
+    // find the discriminant
+    vec3d CO = p_object->get_position() - point;  // sphere's center -> point
+    double a = direction * direction;
+    double b = -2 * (CO * direction);
+    double c = (CO * CO) - std::pow(p_object->get_radius(), 2);
+    double D = b*b - 4.0*a*c;
+
+    if (D < 0) return qNaN;  // no intersections at all
+
+    // solve the quadratic for the smallest POSITIVE root
+    // (we don't need anything that is behind us!)
+    double tm = (-b - std::sqrt(D)) / 2*a;
+    double tp = (-b + std::sqrt(D)) / 2*a;
+    double t;
+    if (tm < tp)
+    {
+        if (tm > 1)
+            t = tm;
+        else  // behind the camera
+            return qNaN;
+    }
+    else  // (tp < tm)
+    {
+        if (tp > 1)
+            t = tp;
+        else  // behind the camera
+            return qNaN;
+    }
+
+    return t;
+}
+
 // Calculate light intensity from all light sources at a given point with a given normal
 color_t Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
                                std::unique_ptr<Sphere>& p_object)
 {
-    std::vector<color_t> list(this->light_sources.size());
+    std::vector<color_t> list;
 
-    std::size_t i = 0;
-    for (; i < this->light_sources.size(); i++)
+    for (auto& p_light_source : this->light_sources)
     {
-        auto& p_light_source = this->light_sources[i];
-        list[i] = color_t::mix({p_light_source->get_color(), p_object->get_color()}) * \
-                  p_light_source->calculate_intensity(point, normal, camera_pos, p_object);
+        if (!this->in_shadow(point, p_light_source))
+        {
+            list.push_back(
+                color_t::mix({p_light_source->get_color(), p_object->get_color()}) * \
+                p_light_source->calculate_intensity(point, normal, camera_pos, p_object)
+            );
+        }
     }
 
     return color_t::mix(list);
+}
+
+// Determine whether or not given `point` is in shadow from given `p_light_source`
+bool Scene::in_shadow(vec3d& point, std::unique_ptr<LightSource>& p_light_source)
+{
+    vec3d L = p_light_source->get_point_to_light_source_vector(point);
+    if (L == vec3d(0, 0, 0))  // if ambient light
+    {
+        return false;
+    }
+    else
+    {
+        for (auto& p_object : this->objects)
+        {
+            if (!std::isnan(this->find_closest_intersection(point, L, p_object)))
+                return true;
+        }
+        return false;
+    }
 }
