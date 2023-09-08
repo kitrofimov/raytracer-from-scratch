@@ -12,6 +12,8 @@
 
 #include "utils/vec/vec.hpp"
 #include "utils/exceptions.hpp"
+#include "utils/solve_quadratic.hpp"
+#include "utils/smallest_positive_in_container.hpp"
 #include "constants.hpp"
 
 using json = nlohmann::json;
@@ -161,7 +163,7 @@ color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
     for (auto &p_object : this->objects)
     {
         double t = this->find_closest_intersection(camera_pos, direction, p_object);
-        if (std::isnan(t))  // if no suitable intersections
+        if (std::isnan(t))
             continue;
 
         vec3d point = camera_pos + direction * t;  // closest point of intersection
@@ -170,42 +172,27 @@ color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
         t_buffer[t] = this->calculate_color(point, normal, camera_pos, p_object);
     }
 
-    // if no intersections at all
+    // if no intersections with any objects
     if (t_buffer.size() == 0)
         return this->background_color;
 
-    // there are some intersections (maybe multiple of them, so find the closest one)
+    // there are some intersections, find the closest one
     return t_buffer[t_buffer.begin()->first];
 }
 
-// Solve a quadratic to find distance to closest intersection with an object (Sphere)
+// Find a distance to closest intersection with an object (Sphere)
 // Returns quiet NaN to show that there is no intersections at all or they are behind the camera
-// Ignores t = 0!!!
+// Ignores t = 0 (does not count `point` itself as intersection)
 double Scene::find_closest_intersection(vec3d& point, vec3d& direction, std::unique_ptr<Sphere>& p_object)
 {
-    // find the discriminant
     vec3d CO = point - p_object->get_position();  // sphere's center -> point
     double a = direction * direction;
     double b = 2 * (CO * direction);
     double c = (CO * CO) - std::pow(p_object->get_radius(), 2);
-    double D = b*b - 4.0*a*c;
 
-    if (D < 0) return qNaN;  // no intersections at all
-
-    // solve the quadratic for the smallest POSITIVE root
-    // (we don't need anything that is behind us!)
-    double t = (-b - std::sqrt(D)) / 2*a;
-    if (t > 0)
-        return t;
-    else if (t == 0)  // if intersection is this point, then compute other root
-    {
-        t = (-b + std::sqrt(D)) / 2*a;
-        if (t == 0)  // if it is still 0 (D == 0), then return qNaN
-            return qNaN;
-    }
-    else  // intersection is behind (t < 0)
-        return qNaN;
-    return;
+    auto distances = solve_quadratic(a, b, c);
+    double t = smallest_positive_in_container(distances);
+    return t;
 }
 
 // Calculate light intensity from all light sources at a given point with a given normal
