@@ -13,7 +13,7 @@ double LightSource::calculate_intensity(vec3d& point, vec3d& normal, vec3d& came
     double diffuse_term = (normal * L) / (normal.magnitude() * L.magnitude());
     clamp_at_zero(diffuse_term);
 
-    double specular_term;
+    double specular_term = 0;
     if (!std::isnan(p_object->get_shininess()))  // if this object is somewhat shiny
     {
         // "real" reflection vector (assuming the surface is perfectly polished, like a mirror)
