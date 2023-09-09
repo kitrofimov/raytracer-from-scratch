@@ -23,11 +23,11 @@ set(
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")
 
-add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
+add_executable(${EXECUTABLE_NAME} ${SOURCES})
 if(MSVC)
-  target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE /W4 /WX)
+  target_compile_options(${EXECUTABLE_NAME} PRIVATE /W4 /WX)
 else()
-  target_compile_options(${CMAKE_PROJECT_NAME} PRIVATE
+  target_compile_options(${EXECUTABLE_NAME} PRIVATE
                          -Wall -Wextra -Wpedantic -Wno-unused)
 endif()
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

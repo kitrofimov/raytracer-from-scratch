@@ -1,4 +1,4 @@
-target_include_directories(${PROJECT_NAME} PUBLIC lib/include)
+target_include_directories(${EXECUTABLE_NAME} PUBLIC lib/include)
 
 add_library(sdl2 SHARED IMPORTED)
 set_property(TARGET sdl2 PROPERTY IMPORTED_LOCATION SDL2.dll)
@@ -12,9 +12,9 @@ find_library(
 )
 
 target_link_libraries(
-  ${CMAKE_PROJECT_NAME} PRIVATE
+  ${EXECUTABLE_NAME} PRIVATE
   ${SDL2_LIB}
 )
 
-target_include_directories(${CMAKE_PROJECT_NAME} PUBLIC include)
+target_include_directories(${EXECUTABLE_NAME} PUBLIC include)
 file(COPY SDL2.dll DESTINATION ${CMAKE_BINARY_DIR}/bin/)  # copy dynamic library to bin
