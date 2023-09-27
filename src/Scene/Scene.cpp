@@ -46,80 +46,94 @@ Scene::Scene(std::filesystem::path scene_file_path)
 
     // Parse objects
     std::vector<std::unique_ptr<Sphere>> objects;
-    for (auto& object : scene_data["objects"])
+    std::vector<std::unique_ptr<LightSource>> light_sources;
+    try
     {
-        std::string type = object["type"];
-
-        if (type == "Sphere")
+        for (auto& object : scene_data["objects"])
         {
-            vec3d position = vec3d(std::vector<double>(object["position"]));
-            double radius = object["radius"];
-            color_t color = color_t(std::vector<unsigned char>(object["color"]));
-            double shininess;
+            std::string type = object["type"];
 
-            try  // if double
+            if (type == "Sphere")
             {
-                shininess = object["shininess"];
+                vec3d position = vec3d(std::vector<double>(object["position"]));
+                double radius = object["radius"];
+                color_t color = color_t(std::vector<unsigned char>(object["color"]));
+                double shininess;
+
+                try  // if double
+                {
+                    shininess = object["shininess"];
+                }
+                catch (const json::type_error& e)  // if NaN (string)
+                {
+                    shininess = qNaN;
+                }
+
+                objects.emplace_back(std::make_unique<Sphere>(
+                    position,
+                    radius,
+                    color,
+                    shininess
+                ));
             }
-            catch (const json::type_error& e)  // if NaN (string)
+
+            else
             {
-                shininess = qNaN;
+                throw JSONFormatError("Bad JSON format: there is no " + type + " object type");
             }
-
-            objects.emplace_back(std::make_unique<Sphere>(
-                position,
-                radius,
-                color,
-                shininess
-            ));
-        }
-
-        else
-        {
-            throw JSONFormatError("Bad JSON format: there is no " + type + " object type");
-        }
     }
 
-    // Parse light sources
-    std::vector<std::unique_ptr<LightSource>> light_sources;
-    for (auto& light_source : scene_data["light_sources"])
+        // Parse light sources
+        for (auto& light_source : scene_data["light_sources"])
+        {
+            std::string type = light_source["type"];
+            double intensity = light_source["intensity"];
+            color_t color = color_t(std::vector<unsigned char>(light_source["color"]));
+
+            if (type == "AmbientLight")
+            {
+                light_sources.emplace_back(std::make_unique<AmbientLight>(
+                    intensity,
+                    color
+                ));
+            }
+
+            else if (type == "PointLight")
+            {
+                vec3d position = vec3d(std::vector<double>(light_source["position"]));
+                light_sources.emplace_back(std::make_unique<PointLight>(
+                    intensity,
+                    color,
+                    position
+                ));
+            }
+
+            else if (type == "DirectionalLight")
+            {
+                vec3d direction = vec3d(std::vector<double>(light_source["direction"]));
+                light_sources.emplace_back(std::make_unique<DirectionalLight>(
+                    intensity,
+                    color,
+                    direction
+                ));
+            }
+
+            else
+            {
+                throw JSONFormatError("Bad JSON format: there is no " + type + " light type");
+            }
+        }
+    }
+    catch (const JSONFormatError& e)
     {
-        std::string type = light_source["type"];
-        double intensity = light_source["intensity"];
-        color_t color = color_t(std::vector<unsigned char>(light_source["color"]));
-
-        if (type == "AmbientLight")
-        {
-            light_sources.emplace_back(std::make_unique<AmbientLight>(
-                intensity,
-                color
-            ));
-        }
-
-        else if (type == "PointLight")
-        {
-            vec3d position = vec3d(std::vector<double>(light_source["position"]));
-            light_sources.emplace_back(std::make_unique<PointLight>(
-                intensity,
-                color,
-                position
-            ));
-        }
-
-        else if (type == "DirectionalLight")
-        {
-            vec3d direction = vec3d(std::vector<double>(light_source["direction"]));
-            light_sources.emplace_back(std::make_unique<DirectionalLight>(
-                intensity,
-                color,
-                direction
-            ));
-        }
-
-        else
-        {
-            throw JSONFormatError("Bad JSON format: there is no " + type + " light source type");
-        }
+        std::cerr << e.what() << std::endl;
+        std::exit(ERROR_CODE_JSON_FORMAT);
+    }
+    catch (const json::type_error& e)
+    {
+        std::cerr << "JSONFormatError\nMake sure you have valid scene file\nInternal error message:" << std::endl;
+        std::cerr << e.what() << std::endl;
+        std::exit(ERROR_CODE_JSON_FORMAT);
     }
 
     color_t background_color = color_t(std::vector<unsigned char>(scene_data["background_color"]));
@@ -226,14 +240,12 @@ bool Scene::in_shadow(vec3d& point, std::unique_ptr<LightSource>& p_light_source
     {
         return false;
     }
-    else
+
+    for (auto& p_object : this->objects)
     {
-        for (auto& p_object : this->objects)
-        {
-            double t = this->find_closest_intersection(point, L, p_object);
-            if (!std::isnan(t))
-                return true;
-        }
-        return false;
+        double t = this->find_closest_intersection(point, L, p_object);
+        if (!std::isnan(t))
+            return true;
     }
+    return false;
 }

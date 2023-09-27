@@ -5,7 +5,7 @@
             "position": [-0.5, 1, 2],
             "radius": 1,
             "color": [155, 0, 0, 255],
-            "shininess": 10
+            "shininess": "NaN"
         },
         {
             "type": "Sphere",
@@ -17,10 +17,10 @@
     ],
     "light_sources": [
         {
-            "type": "DirectionalLight",
+            "type": "PointLight",
             "intensity": 1,
             "color": [255, 255, 255, 255],
-            "direction": [1, -1, 1]
+            "position": [-1, 1, 0.25]
         },
         {
             "type": "AmbientLight",
