@@ -12,6 +12,8 @@
 
 #include "utils/vec/vec.hpp"
 #include "utils/exceptions.hpp"
+#include "utils/solve_quadratic.hpp"
+#include "utils/smallest_positive_in_container.hpp"
 #include "constants.hpp"
 
 using json = nlohmann::json;
@@ -44,80 +46,94 @@ Scene::Scene(std::filesystem::path scene_file_path)
 
     // Parse objects
     std::vector<std::unique_ptr<Sphere>> objects;
-    for (auto& object : scene_data["objects"])
+    std::vector<std::unique_ptr<LightSource>> light_sources;
+    try
     {
-        std::string type = object["type"];
-
-        if (type == "Sphere")
+        for (auto& object : scene_data["objects"])
         {
-            vec3d position = vec3d(std::vector<double>(object["position"]));
-            double radius = object["radius"];
-            color_t color = color_t(std::vector<unsigned char>(object["color"]));
-            double shininess;
+            std::string type = object["type"];
 
-            try  // if double
+            if (type == "Sphere")
             {
-                shininess = object["shininess"];
+                vec3d position = vec3d(std::vector<double>(object["position"]));
+                double radius = object["radius"];
+                color_t color = color_t(std::vector<unsigned char>(object["color"]));
+                double shininess;
+
+                try  // if double
+                {
+                    shininess = object["shininess"];
+                }
+                catch (const json::type_error& e)  // if NaN (string)
+                {
+                    shininess = qNaN;
+                }
+
+                objects.emplace_back(std::make_unique<Sphere>(
+                    position,
+                    radius,
+                    color,
+                    shininess
+                ));
             }
-            catch (const json::type_error& e)  // if NaN (string)
+
+            else
             {
-                shininess = std::numeric_limits<double>::quiet_NaN();
+                throw JSONFormatError("Bad JSON format: there is no " + type + " object type");
             }
-
-            objects.emplace_back(std::make_unique<Sphere>(
-                position,
-                radius,
-                color,
-                shininess
-            ));
-        }
-
-        else
-        {
-            throw JSONFormatError("Bad JSON format: there is no " + type + " object type");
-        }
     }
 
-    // Parse light sources
-    std::vector<std::unique_ptr<LightSource>> light_sources;
-    for (auto& light_source : scene_data["light_sources"])
+        // Parse light sources
+        for (auto& light_source : scene_data["light_sources"])
+        {
+            std::string type = light_source["type"];
+            double intensity = light_source["intensity"];
+            color_t color = color_t(std::vector<unsigned char>(light_source["color"]));
+
+            if (type == "AmbientLight")
+            {
+                light_sources.emplace_back(std::make_unique<AmbientLight>(
+                    intensity,
+                    color
+                ));
+            }
+
+            else if (type == "PointLight")
+            {
+                vec3d position = vec3d(std::vector<double>(light_source["position"]));
+                light_sources.emplace_back(std::make_unique<PointLight>(
+                    intensity,
+                    color,
+                    position
+                ));
+            }
+
+            else if (type == "DirectionalLight")
+            {
+                vec3d direction = vec3d(std::vector<double>(light_source["direction"]));
+                light_sources.emplace_back(std::make_unique<DirectionalLight>(
+                    intensity,
+                    color,
+                    direction
+                ));
+            }
+
+            else
+            {
+                throw JSONFormatError("Bad JSON format: there is no " + type + " light type");
+            }
+        }
+    }
+    catch (const JSONFormatError& e)
     {
-        std::string type = light_source["type"];
-        double intensity = light_source["intensity"];
-        color_t color = color_t(std::vector<unsigned char>(light_source["color"]));
-
-        if (type == "AmbientLight")
-        {
-            light_sources.emplace_back(std::make_unique<AmbientLight>(
-                intensity,
-                color
-            ));
-        }
-
-        else if (type == "PointLight")
-        {
-            vec3d position = vec3d(std::vector<double>(light_source["position"]));
-            light_sources.emplace_back(std::make_unique<PointLight>(
-                intensity,
-                color,
-                position
-            ));
-        }
-
-        else if (type == "DirectionalLight")
-        {
-            vec3d direction = vec3d(std::vector<double>(light_source["direction"]));
-            light_sources.emplace_back(std::make_unique<DirectionalLight>(
-                intensity,
-                color,
-                direction
-            ));
-        }
-
-        else
-        {
-            throw JSONFormatError("Bad JSON format: there is no " + type + " light source type");
-        }
+        std::cerr << e.what() << std::endl;
+        std::exit(ERROR_CODE_JSON_FORMAT);
+    }
+    catch (const json::type_error& e)
+    {
+        std::cerr << "JSONFormatError\nMake sure you have valid scene file\nInternal error message:" << std::endl;
+        std::cerr << e.what() << std::endl;
+        std::exit(ERROR_CODE_JSON_FORMAT);
     }
 
     color_t background_color = color_t(std::vector<unsigned char>(scene_data["background_color"]));
@@ -154,65 +170,82 @@ void Scene::render(Window& window, Camera& camera)
 }
 
 // Cast the ray from camera (origin) to specified direction
-//     TODO: if there are more than one object the ray has intersection
-// with, the one rendered is going to be not the one closer, but the one
-// that is first in `objects` vector. need to fix this! (some z-buffer?)
-//     TODO: remove magic number constant `1` in `if` statements! (that
-// is near plane distance)
 color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
 {
+    std::map<double, color_t> t_buffer;
+
     for (auto &p_object : this->objects)
     {
-        // find the quadratic's discriminant
-        vec3d CO = p_object->get_position() - camera_pos;  // sphere's center -> camera
-        double a = direction * direction;
-        double b = -2 * (CO * direction);
-        double c = (CO * CO) - std::pow(p_object->get_radius(), 2);
-        double D = b*b - 4.0*a*c;
-
-        if (D < 0) continue;  // no intersections at all
-
-        // solve the quadratic for the smallest POSITIVE root
-        // (we don't need anything that is behind us!)
-        double tm = (-b - std::sqrt(D)) / 2*a;
-        double tp = (-b + std::sqrt(D)) / 2*a;
-        double t;
-        if (tm < tp)
-        {
-            if (tm > 1)
-                t = tm;
-            else  // behind the camera
-                continue;
-        }
-        else  // (tp < tm)
-        {
-            if (tp > 1)
-                t = tp;
-            else  // behind the camera
-                continue;
-        }
+        double t = this->find_closest_intersection(camera_pos, direction, p_object);
+        if (std::isnan(t))
+            continue;
 
         vec3d point = camera_pos + direction * t;  // closest point of intersection
         vec3d normal = (point - p_object->get_position()).normalize();
 
-        return this->calculate_color(point, normal, camera_pos, p_object);
+        t_buffer[t] = this->calculate_color(point, normal, camera_pos, p_object);
     }
-    return this->background_color;
+
+    // if no intersections with any objects
+    if (t_buffer.size() == 0)
+        return this->background_color;
+
+    // there are some intersections, find the closest one
+    return t_buffer[t_buffer.begin()->first];
+}
+
+// Find a distance to closest intersection with an object (Sphere)
+// Returns quiet NaN to show that there is no intersections at all or they are behind the camera
+// Ignores t = 0 (does not count `point` itself as intersection)
+double Scene::find_closest_intersection(vec3d& point, vec3d& direction, std::unique_ptr<Sphere>& p_object)
+{
+    vec3d CO = point - p_object->get_position();  // sphere's center -> point
+    double a = direction * direction;
+    double b = 2 * (CO * direction);
+    double c = (CO * CO) - std::pow(p_object->get_radius(), 2);
+
+    auto distances = solve_quadratic(a, b, c);
+    double t = smallest_positive_in_container(distances);
+    return t;
 }
 
 // Calculate light intensity from all light sources at a given point with a given normal
 color_t Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
                                std::unique_ptr<Sphere>& p_object)
 {
-    std::vector<color_t> list(this->light_sources.size());
+    std::vector<color_t> list;
 
-    std::size_t i = 0;
-    for (; i < this->light_sources.size(); i++)
+    for (auto& p_light_source : this->light_sources)
     {
-        auto& p_light_source = this->light_sources[i];
-        list[i] = color_t::mix({p_light_source->get_color(), p_object->get_color()}) * \
-                  p_light_source->calculate_intensity(point, normal, camera_pos, p_object);
+        if (!this->in_shadow(point, p_light_source))
+        {
+            double intensity = p_light_source->calculate_intensity(point, normal, camera_pos, p_object);
+            // clamp intensity to remove visible "light borders" with ambient and regular light sources
+            intensity = (intensity < 0.2) ? 0.2 : intensity;
+            list.push_back(
+                color_t::mix({p_light_source->get_color(), p_object->get_color()}) * \
+                intensity
+            );
+        }
     }
 
     return color_t::mix(list);
+}
+
+// Determine whether or not given `point` is in shadow from given `p_light_source`
+bool Scene::in_shadow(vec3d& point, std::unique_ptr<LightSource>& p_light_source)
+{
+    vec3d L = p_light_source->get_point_to_light_source_vector(point);
+    if (L == vec3d(0, 0, 0))  // if ambient light
+    {
+        return false;
+    }
+
+    for (auto& p_object : this->objects)
+    {
+        double t = this->find_closest_intersection(point, L, p_object);
+        if (!std::isnan(t))
+            return true;
+    }
+    return false;
 }

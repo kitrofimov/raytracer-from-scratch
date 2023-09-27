@@ -12,7 +12,7 @@ int main()
     // Initialization
     Window window(vec2i(512, 512));
     window.clear(color_t(0, 0, 0, 255));
-    Camera camera(vec3d(0, 0, 0), vec2d(0.4, 0.4), 1);
+    Camera camera(vec3d(0, 0, 0), vec2d(1, 1), 1);
     Scene scene(scene_file_path);
 
     // Rendering

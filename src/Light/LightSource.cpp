@@ -3,17 +3,17 @@
 #include "Sphere/Sphere.hpp"
 #include "utils/clamp_at_zero.hpp"
 
-// Internal function for calculating intensity of light at some point
-// L is a vector (point -> light source)
-double LightSource::_calculate_intensity(vec3d point, vec3d L, vec3d normal,
-                                        vec3d camera_pos, std::unique_ptr<Sphere>& p_object)
+// Calculate intensity of light at some point
+double LightSource::calculate_intensity(vec3d& point, vec3d& normal, vec3d& camera_pos,
+                                        std::unique_ptr<Sphere>& p_object)
 {
+    vec3d L = this->get_point_to_light_source_vector(point);
     double intensity_at_point;
 
     double diffuse_term = (normal * L) / (normal.magnitude() * L.magnitude());
     clamp_at_zero(diffuse_term);
 
-    double specular_term;
+    double specular_term = 0;
     if (!std::isnan(p_object->get_shininess()))  // if this object is somewhat shiny
     {
         // "real" reflection vector (assuming the surface is perfectly polished, like a mirror)

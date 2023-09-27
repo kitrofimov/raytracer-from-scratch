@@ -9,10 +9,7 @@ PointLight::PointLight(double intensity, color_t color, vec3d position)
     this->position = position;
 }
 
-double PointLight::calculate_intensity(vec3d& point, vec3d& normal, vec3d& camera_pos,
-                                       std::unique_ptr<Sphere>& p_object)
+vec3d PointLight::get_point_to_light_source_vector(vec3d& point)
 {
-    // light direction vector (point -> light source)
-    vec3d L = this->position - point;
-    return this->_calculate_intensity(point, L, normal, camera_pos, p_object);
+    return this->position - point;
 }
