@@ -4,9 +4,9 @@ A raytracer, which uses left-hand coordinate system, and in which camera looks i
 
 ## TODO/NOTES
 New features
-- [ ] Add shadows
-    - [ ] `PointLight`
-    - [ ] Test
+- [x] Add shadows
+    - [x] `PointLight`
+    - [x] Test
 - [ ] Add reflections
 - [ ] Add other primitives
 
