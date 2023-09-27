@@ -205,9 +205,12 @@ color_t Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
     {
         if (!this->in_shadow(point, p_light_source))
         {
+            double intensity = p_light_source->calculate_intensity(point, normal, camera_pos, p_object);
+            // clamp intensity to remove visible "light borders" with ambient and regular light sources
+            intensity = (intensity < 0.2) ? 0.2 : intensity;
             list.push_back(
                 color_t::mix({p_light_source->get_color(), p_object->get_color()}) * \
-                p_light_source->calculate_intensity(point, normal, camera_pos, p_object)
+                intensity
             );
         }
     }
