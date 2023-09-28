@@ -1,5 +1,6 @@
 #define SDL_MAIN_HANDLED
 #include <iostream>
+#include <chrono>
 
 #include "Window/Window.hpp"
 #include "Camera/Camera.hpp"
@@ -15,9 +16,12 @@ int main()
     Camera camera(vec3d(0, 0, 0), vec2d(1, 1), 1);
     Scene scene(scene_file_path);
 
-    // Rendering
+    // Render the scene
+    auto t1 = std::chrono::high_resolution_clock::now();
     scene.render(window, camera);
-    std::cout << "Rendered!" << std::endl;
+    auto t2 = std::chrono::high_resolution_clock::now();
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1);
+    std::cout << "Rendered in " << ms.count() <<  "ms" << std::endl;
 
     unsigned int this_frame_time = 0;
     unsigned int delta_time = 0;
