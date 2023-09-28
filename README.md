@@ -36,6 +36,7 @@ That means if you want your directional light to be white, 100% intense and to "
 ## TODO/NOTES
 New features:
 - [ ] Add reflections
+- [ ] Clean up variable names, clean up inlined utility functions
 - [ ] Add other primitives
     - [ ] Planes
     - [ ] Mathematical functions (???)

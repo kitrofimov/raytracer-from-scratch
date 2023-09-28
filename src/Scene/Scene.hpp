@@ -19,7 +19,7 @@ public:
           color_t background_color = color_t(0, 0, 0, 255));
 
     void render(Window& window, Camera& camera);
-    color_t cast_ray(vec3d camera_pos, vec3d direction);
+    color_t cast_ray(vec3d origin, vec3d direction, int r = 0);
     double find_closest_intersection(vec3d& point, vec3d& direction, std::unique_ptr<Sphere>& p_object);
     color_t calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
                             std::unique_ptr<Sphere>& p_object);

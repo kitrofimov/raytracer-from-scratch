@@ -14,6 +14,8 @@
 #include "utils/exceptions.hpp"
 #include "utils/solve_quadratic.hpp"
 #include "utils/smallest_positive_in_container.hpp"
+#include "utils/reflect_ray.hpp"
+#include "utils/lerp.hpp"
 #include "constants.hpp"
 
 using json = nlohmann::json;
@@ -59,6 +61,7 @@ Scene::Scene(std::filesystem::path scene_file_path)
                 double radius = object["radius"];
                 color_t color = color_t(std::vector<unsigned char>(object["color"]));
                 double shininess;
+                double reflectiveness = object["reflectiveness"];
 
                 try  // if double
                 {
@@ -73,7 +76,8 @@ Scene::Scene(std::filesystem::path scene_file_path)
                     position,
                     radius,
                     color,
-                    shininess
+                    shininess,
+                    reflectiveness
                 ));
             }
 
@@ -169,21 +173,39 @@ void Scene::render(Window& window, Camera& camera)
     }
 }
 
-// Cast the ray from camera (origin) to specified direction
-color_t Scene::cast_ray(vec3d camera_pos, vec3d direction)
+// Cast the ray from origin to specified direction
+// `r` - recursive parameter, only used internally by recursion
+color_t Scene::cast_ray(vec3d origin, vec3d direction, int r)
 {
+    if (r == 3)
+        return color_t(0, 0, 0, 0);
+
     std::map<double, color_t> t_buffer;
 
     for (auto &p_object : this->objects)
     {
-        double t = this->find_closest_intersection(camera_pos, direction, p_object);
+        double t = this->find_closest_intersection(origin, direction, p_object);
         if (std::isnan(t))
             continue;
 
-        vec3d point = camera_pos + direction * t;  // closest point of intersection
+        vec3d point = origin + direction * t;  // closest point of intersection
         vec3d normal = (point - p_object->get_position()).normalize();
 
-        t_buffer[t] = this->calculate_color(point, normal, camera_pos, p_object);
+        double reflectiveness = p_object->get_reflectiveness();
+        color_t local_color;
+        color_t reflection_color;
+
+        if (reflectiveness != 0)
+        {
+            vec3d reflection_direction = reflect_ray(-direction, normal);
+            reflection_color = this->cast_ray(point, reflection_direction, r + 1);
+        }
+        if (reflectiveness != 1)
+        {
+            local_color = this->calculate_color(point, normal, origin, p_object);
+        }
+
+        t_buffer[t] = lerp(local_color, reflection_color, reflectiveness);
     }
 
     // if no intersections with any objects
