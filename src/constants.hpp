@@ -15,4 +15,5 @@ constexpr double tolerance = 1e-5;  // used as a tolerance value in `smallest_po
                                     // to fix precision errors (black dots, see issue #1 on GitHub)
 
 // Other
+constexpr int CAST_RAY_RECURSIVE_LIMIT = 3;
 const std::filesystem::path scene_file_path = "scene.json";

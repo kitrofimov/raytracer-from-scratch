@@ -177,7 +177,7 @@ void Scene::render(Window& window, Camera& camera)
 // `r` - recursive parameter, only used internally by recursion
 color_t Scene::cast_ray(vec3d origin, vec3d direction, int r)
 {
-    if (r == 3)  // recursion limit
+    if (r == CAST_RAY_RECURSIVE_LIMIT)  // recursion limit
         return color_t(0, 0, 0, 0);
 
     std::map<double, color_t> t_buffer;

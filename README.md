@@ -1,6 +1,14 @@
 # raytracer-from-scratch
 
-A raytracer, which uses left-hand coordinate system, and in which camera looks in `+Z` direction by default. Visualization of the simple scene I made in GeoGebra: https://www.geogebra.org/calculator/zfexqajh
+A raytracer which uses left-hand coordinate system and in which camera looks in `+Z` direction by default.
+
+Features:
+- Sphere primitive
+- Variety of light sources (point, ambient, directional)
+- Shininess
+- Reflections
+
+Visualization of the simple scene I made in GeoGebra: https://www.geogebra.org/calculator/zfexqajh
 
 # Installation
 ```bash
