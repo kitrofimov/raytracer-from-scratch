@@ -35,7 +35,7 @@ Scene::Scene(std::filesystem::path scene_file_path)
     }
     catch (const std::ios_base::failure& e)
     {
-        std::cerr << "Failed to open " << scene_file_path.c_str() << std::endl;
+        std::cerr << "Failed to open " << scene_file_path << std::endl;
         std::cerr << e.what() << std::endl;
         std::exit(ERROR_CODE_FILE_EXCEPTION);
     }
@@ -168,7 +168,7 @@ void Scene::render(Window& window, Camera& camera)
             vec3d ray_direction = (point_on_projection_plane - camera.get_position()).normalize();
 
             color_t color = this->cast_ray(camera.get_position(), ray_direction);
-            window.draw_pixel(ndc, color);
+            window.draw_pixel(vec2i(x, y), color);
         }
     }
 }
@@ -177,7 +177,7 @@ void Scene::render(Window& window, Camera& camera)
 // `r` - recursive parameter, only used internally by recursion
 color_t Scene::cast_ray(vec3d origin, vec3d direction, int r)
 {
-    if (r == 3)
+    if (r == 3)  // recursion limit
         return color_t(0, 0, 0, 0);
 
     std::map<double, color_t> t_buffer;
