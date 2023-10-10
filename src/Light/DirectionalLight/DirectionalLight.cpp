@@ -13,3 +13,8 @@ vec3d DirectionalLight::get_point_to_light_source_vector(vec3d& point)
 {
     return -this->direction;
 }
+
+LightSourceType DirectionalLight::get_type()
+{
+    return LightSourceType::DirectionalLight;
+}
