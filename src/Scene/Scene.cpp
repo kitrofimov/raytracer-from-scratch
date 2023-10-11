@@ -257,21 +257,21 @@ color_t Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
 // Determine whether or not given `point` is in shadow from given `p_light_source`
 bool Scene::in_shadow(vec3d& point, std::unique_ptr<LightSource>& p_light_source)
 {
-    vec3d L = p_light_source->get_point_to_light_source_vector(point);
-    double L_mag = L.magnitude();
-    if (L == vec3d(0, 0, 0))  // if ambient light
+    if (p_light_source->get_type() == LightSourceType::AmbientLight)
     {
         return false;
     }
+
+    vec3d L = p_light_source->get_point_to_light_source_vector(point).normalize();
 
     for (auto& p_object : this->objects)
     {
         double t = this->find_closest_intersection(point, L, p_object);
         // if it is PointLight and distance to intersection is further away from light source,
         // then it is not in shadow
-        if ((p_light_source->get_type() == LightSourceType::PointLight) && (t >= L_mag))
+        if ((p_light_source->get_type() == LightSourceType::PointLight) && (t >= 1))
             continue;
-        if (!std::isnan(t))  // if there is no intersections
+        if (!std::isnan(t) && t > 0.1)  // if there is an intersection
             return true;
     }
     return false;

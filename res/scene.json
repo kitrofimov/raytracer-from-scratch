@@ -39,6 +39,11 @@
             "intensity": 1,
             "color": [255, 255, 255, 255],
             "position": [0, 0, 0]
+        },
+        {
+            "type": "AmbientLight",
+            "intensity": 0.1,
+            "color": [255, 255, 255, 255]
         }
     ],
     "background_color": [0, 0, 0, 255]
