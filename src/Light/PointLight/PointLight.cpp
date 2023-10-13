@@ -2,7 +2,7 @@
 #include "PointLight.hpp"
 #include "utils/vec/vec3.hpp"
 
-PointLight::PointLight(double intensity, color_t color, vec3d position)
+PointLight::PointLight(double intensity, Color color, vec3d position)
 {
     this->intensity = intensity;
     this->color = color;

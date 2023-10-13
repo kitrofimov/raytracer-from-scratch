@@ -3,7 +3,7 @@
 #include "color.hpp"
 #include "utils/vec/vec4.hpp"
 
-color_t::color_t()
+Color::Color()
 {
     this->r = 0;
     this->g = 0;
@@ -11,7 +11,7 @@ color_t::color_t()
     this->a = 0;
 }
 
-color_t::color_t(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+Color::Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
 {
     this->r = r;
     this->g = g;
@@ -19,7 +19,7 @@ color_t::color_t(unsigned char r, unsigned char g, unsigned char b, unsigned cha
     this->a = a;
 }
 
-color_t::color_t(std::vector<unsigned char> vector)
+Color::Color(std::vector<unsigned char> vector)
 {
     this->r = vector[0];
     this->g = vector[1];
@@ -28,7 +28,7 @@ color_t::color_t(std::vector<unsigned char> vector)
 }
 
 template <typename T>
-color_t::color_t(vec4<T> vec)
+Color::Color(vec4<T> vec)
 {
     this->r = (unsigned char) vec.x;
     this->g = (unsigned char) vec.y;
@@ -36,9 +36,9 @@ color_t::color_t(vec4<T> vec)
     this->a = (unsigned char) vec.w;
 }
 
-color_t color_t::operator+(color_t other) const
+Color Color::operator+(Color other) const
 {
-    color_t result = {0, 0, 0, 0};
+    Color result = {0, 0, 0, 0};
     for (int i = 0; i < 4; i++)
     {
         int temp = (int) (*this)[i] + (int) other[i];
@@ -47,9 +47,9 @@ color_t color_t::operator+(color_t other) const
     return result;
 }
 
-color_t color_t::operator-(color_t other) const
+Color Color::operator-(Color other) const
 {
-    color_t result = {0, 0, 0, 0};
+    Color result = {0, 0, 0, 0};
     for (int i = 0; i < 4; i++)
     {
         int temp = (int) (*this)[i] - (int) other[i];
@@ -58,9 +58,9 @@ color_t color_t::operator-(color_t other) const
     return result;
 }
 
-color_t color_t::operator*(double scalar) const
+Color Color::operator*(double scalar) const
 {
-    color_t result = {0, 0, 0, 0};
+    Color result = {0, 0, 0, 0};
     for (int i = 0; i < 4; i++)
     {
         double temp = (double) (*this)[i] * scalar;
@@ -69,9 +69,9 @@ color_t color_t::operator*(double scalar) const
     return result;
 }
 
-color_t color_t::operator/(double scalar) const
+Color Color::operator/(double scalar) const
 {
-    color_t result = {0, 0, 0, 0};
+    Color result = {0, 0, 0, 0};
     for (int i = 0; i < 4; i++)
     {
         double temp = (double) (*this)[i] / scalar;
@@ -80,13 +80,13 @@ color_t color_t::operator/(double scalar) const
     return result;
 }
 
-color_t& color_t::operator+=(color_t other)
+Color& Color::operator+=(Color other)
 {
     *this = *this + other;
     return *this;
 }
 
-unsigned char color_t::operator[](int i) const
+unsigned char Color::operator[](int i) const
 {
     switch (i)
     {
@@ -108,7 +108,7 @@ unsigned char color_t::operator[](int i) const
     }
 }
 
-unsigned char& color_t::operator[](int i)
+unsigned char& Color::operator[](int i)
 {
     switch (i)
     {
@@ -131,7 +131,7 @@ unsigned char& color_t::operator[](int i)
 }
 
 template <typename T>
-color_t::operator vec4<T>() const
+Color::operator vec4<T>() const
 {
     return vec4<T>{
         (T) this->r,
@@ -141,11 +141,11 @@ color_t::operator vec4<T>() const
     };
 }
 
-color_t color_t::mix(std::vector<color_t> list)
+Color Color::mix(std::vector<Color> list)
 {
     vec4i result = {0, 0, 0, 0};
     for (auto& color : list)
         result = result + (vec4i) color;
     result = result / list.size();
-    return color_t(result);
+    return Color(result);
 }

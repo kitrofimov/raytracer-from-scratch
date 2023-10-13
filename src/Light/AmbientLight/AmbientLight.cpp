@@ -1,7 +1,7 @@
 #include "AmbientLight.hpp"
 #include "utils/vec/vec3.hpp"
 
-AmbientLight::AmbientLight(double intensity, color_t color)
+AmbientLight::AmbientLight(double intensity, Color color)
 {
     this->intensity = intensity;
     this->color = color;

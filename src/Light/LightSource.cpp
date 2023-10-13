@@ -1,7 +1,6 @@
 #include <memory>
 #include "LightSource.hpp"
 #include "Sphere/Sphere.hpp"
-#include "utils/clamp_at_zero.hpp"
 #include "utils/reflect_ray.hpp"
 
 double LightSource::calculate_intensity(vec3d& point, vec3d& normal, vec3d& camera_pos,
@@ -11,7 +10,7 @@ double LightSource::calculate_intensity(vec3d& point, vec3d& normal, vec3d& came
     double intensity_at_point;
 
     double diffuse_term = (normal * p2ls) / (normal.magnitude() * p2ls.magnitude());
-    clamp_at_zero(diffuse_term);
+    diffuse_term = (diffuse_term < 0) ? 0 : diffuse_term;
 
     double specular_term = 0;
     if (!std::isnan(p_object->get_shininess()))  // if this object is somewhat shiny
@@ -20,7 +19,7 @@ double LightSource::calculate_intensity(vec3d& point, vec3d& normal, vec3d& came
         vec3d p2c = camera_pos - point;  // point -> camera
 
         specular_term = (reflection * p2c) / (reflection.magnitude() * p2c.magnitude());
-        clamp_at_zero(specular_term);
+        specular_term = (specular_term < 0) ? 0 : specular_term;
         specular_term = std::pow(specular_term, p_object->get_shininess());
     }
 

@@ -18,7 +18,7 @@ set(
   Light/DirectionalLight/DirectionalLight.cpp
 
   # Utility classes/functions
-  utils/color/color.cpp
+  utils/Color/Color.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")
