@@ -34,7 +34,7 @@ void Window::poll_events()
     }
 }
 
-void Window::clear(color_t c)
+void Window::clear(Color c)
 {
     SDL_SetRenderDrawColor(this->sdl_renderer, c.r, c.g, c.b, c.a);
     SDL_RenderClear(this->sdl_renderer);
@@ -58,11 +58,11 @@ vec3d Window::ndc_to_projection_plane(vec2d ndc, Camera& camera)
     return vec3d(
         -ndc.x * camera.get_projection_plane_dims().x,
         -ndc.y * camera.get_projection_plane_dims().y,
-        camera.get_near_plane()
+        camera.get_near_plane_distance()
     );
 }
 
-void Window::draw_pixel(vec2i pos, color_t c)
+void Window::draw_pixel(vec2i pos, Color c)
 {
     SDL_SetRenderDrawColor(this->sdl_renderer, c.r, c.g, c.b, c.a);
     SDL_RenderDrawPoint(this->sdl_renderer, pos.x, pos.y);

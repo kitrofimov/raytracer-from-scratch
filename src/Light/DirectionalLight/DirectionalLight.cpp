@@ -2,7 +2,7 @@
 #include "DirectionalLight.hpp"
 #include "utils/vec/vec3.hpp"
 
-DirectionalLight::DirectionalLight(double intensity, color_t color, vec3d direction)
+DirectionalLight::DirectionalLight(double intensity, Color color, vec3d direction)
 {
     this->intensity = intensity;
     this->color = color;

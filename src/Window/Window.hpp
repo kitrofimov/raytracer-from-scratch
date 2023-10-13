@@ -11,14 +11,14 @@ public:
     ~Window();
 
     void poll_events();
-    void clear(color_t c);
+    void clear(Color c);
     void swap_buffers();
     inline bool is_running() { return running; }
 
     vec2d pixel_to_ndc(vec2i position);
     vec3d ndc_to_projection_plane(vec2d ndc, Camera& camera);
 
-    void draw_pixel(vec2i pos, color_t c);
+    void draw_pixel(vec2i pos, Color c);
 
     inline vec2i get_dimensions() { return dimensions; }
 

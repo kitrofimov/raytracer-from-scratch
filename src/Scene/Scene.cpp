@@ -12,15 +12,13 @@
 
 #include "utils/vec/vec.hpp"
 #include "utils/exceptions.hpp"
-#include "utils/solve_quadratic.hpp"
-#include "utils/smallest_positive_in_container.hpp"
+#include "utils/quadratic.hpp"
 #include "utils/reflect_ray.hpp"
 #include "utils/lerp.hpp"
 #include "constants.hpp"
 
 using json = nlohmann::json;
 
-// Parse the scene form a JSON file
 Scene::Scene(std::filesystem::path scene_file_path)
 {
     // Read the file, parse JSON
@@ -59,7 +57,7 @@ Scene::Scene(std::filesystem::path scene_file_path)
             {
                 vec3d position = vec3d(std::vector<double>(object["position"]));
                 double radius = object["radius"];
-                color_t color = color_t(std::vector<unsigned char>(object["color"]));
+                Color color = Color(std::vector<unsigned char>(object["color"]));
                 double shininess;
                 double reflectiveness = object["reflectiveness"];
 
@@ -92,7 +90,7 @@ Scene::Scene(std::filesystem::path scene_file_path)
         {
             std::string type = light_source["type"];
             double intensity = light_source["intensity"];
-            color_t color = color_t(std::vector<unsigned char>(light_source["color"]));
+            Color color = Color(std::vector<unsigned char>(light_source["color"]));
 
             if (type == "AmbientLight")
             {
@@ -140,7 +138,7 @@ Scene::Scene(std::filesystem::path scene_file_path)
         std::exit(ERROR_CODE_JSON_FORMAT);
     }
 
-    color_t background_color = color_t(std::vector<unsigned char>(scene_data["background_color"]));
+    Color background_color = Color(std::vector<unsigned char>(scene_data["background_color"]));
 
     this->objects = std::move(objects);
     this->light_sources = std::move(light_sources);
@@ -149,7 +147,7 @@ Scene::Scene(std::filesystem::path scene_file_path)
 
 Scene::Scene(std::vector<std::unique_ptr<Sphere>> &objects,
              std::vector<std::unique_ptr<LightSource>> &light_sources,
-             color_t background_color)
+             Color background_color)
 {
     this->objects = std::move(objects);
     this->light_sources = std::move(light_sources);
@@ -158,7 +156,6 @@ Scene::Scene(std::vector<std::unique_ptr<Sphere>> &objects,
 
 void Scene::render(Window& window, Camera& camera)
 {
-    // For every pixel in the window
     for (int y = 0; y < window.get_dimensions().y; y++)
     {
         for (int x = 0; x < window.get_dimensions().x; x++)
@@ -167,20 +164,18 @@ void Scene::render(Window& window, Camera& camera)
             vec3d point_on_projection_plane = window.ndc_to_projection_plane(ndc, camera);
             vec3d ray_direction = (point_on_projection_plane - camera.get_position()).normalize();
 
-            color_t color = this->cast_ray(camera.get_position(), ray_direction);
+            Color color = this->cast_ray(camera.get_position(), ray_direction);
             window.draw_pixel(vec2i(x, y), color);
         }
     }
 }
 
-// Cast the ray from origin to specified direction
-// `r` - recursive parameter, only used internally by recursion
-color_t Scene::cast_ray(vec3d origin, vec3d direction, int r)
+Color Scene::cast_ray(vec3d origin, vec3d direction, int r)
 {
     if (r == CAST_RAY_RECURSIVE_LIMIT)  // recursion limit
-        return color_t(0, 0, 0, 0);
+        return Color(0, 0, 0, 0);
 
-    std::map<double, color_t> t_buffer;
+    std::map<double, Color> t_buffer;
 
     for (auto &p_object : this->objects)
     {
@@ -192,8 +187,8 @@ color_t Scene::cast_ray(vec3d origin, vec3d direction, int r)
         vec3d normal = (point - p_object->get_position()).normalize();
 
         double reflectiveness = p_object->get_reflectiveness();
-        color_t local_color;
-        color_t reflection_color;
+        Color local_color;
+        Color reflection_color;
 
         if (reflectiveness != 0)
         {
@@ -216,26 +211,19 @@ color_t Scene::cast_ray(vec3d origin, vec3d direction, int r)
     return t_buffer[t_buffer.begin()->first];
 }
 
-// Find a distance to closest intersection with an object (Sphere)
-// Returns quiet NaN to show that there is no intersections at all or they are behind the camera
-// Ignores t = 0 (does not count `point` itself as intersection)
 double Scene::find_closest_intersection(vec3d& point, vec3d& direction, std::unique_ptr<Sphere>& p_object)
 {
-    vec3d CO = point - p_object->get_position();  // sphere's center -> point
+    vec3d c2p = point - p_object->get_position();  // sphere's center -> point
     double a = direction * direction;
-    double b = 2 * (CO * direction);
-    double c = (CO * CO) - std::pow(p_object->get_radius(), 2);
-
-    auto distances = solve_quadratic(a, b, c);
-    double t = smallest_positive_in_container(distances);
-    return t;
+    double b = 2 * (c2p * direction);
+    double c = (c2p * c2p) - std::pow(p_object->get_radius(), 2);
+    return solve_quadratic_for_smallest_positive(a, b, c);
 }
 
-// Calculate light intensity from all light sources at a given point with a given normal
-color_t Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
+Color Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
                                std::unique_ptr<Sphere>& p_object)
 {
-    std::vector<color_t> list;
+    std::vector<Color> list;
 
     for (auto& p_light_source : this->light_sources)
     {
@@ -245,16 +233,15 @@ color_t Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
             // clamp intensity to remove visible "light borders" with ambient and regular light sources
             intensity = (intensity < 0.2) ? 0.2 : intensity;
             list.push_back(
-                color_t::mix({p_light_source->get_color(), p_object->get_color()}) * \
+                Color::mix({p_light_source->get_color(), p_object->get_color()}) * \
                 intensity
             );
         }
     }
 
-    return color_t::mix(list);
+    return Color::mix(list);
 }
 
-// Determine whether or not given `point` is in shadow from given `p_light_source`
 bool Scene::in_shadow(vec3d& point, std::unique_ptr<LightSource>& p_light_source)
 {
     if (p_light_source->get_type() == LightSourceType::AmbientLight)
