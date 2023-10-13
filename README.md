@@ -43,8 +43,8 @@ That means if you want your directional light to be white, 100% intense and to "
 
 ## TODO/NOTES
 New features:
-- [ ] Add reflections
 - [ ] Clean up variable names, clean up inlined utility functions
+- [ ] Add console renderer
 - [ ] Add other primitives
     - [ ] Planes
     - [ ] Mathematical functions (???)
@@ -53,6 +53,7 @@ New features:
     - [ ] Torus
     - [ ] Polygon
 - [ ] Camera transform (camera matrix)
+- [ ] Real-time rendering, camera movement?
 
 Potential bug causes:
 - [ ] `alpha` parameter is changing during `color_t` arithmetic (should it?)
