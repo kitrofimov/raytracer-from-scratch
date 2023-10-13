@@ -62,10 +62,8 @@ vec3d Window::ndc_to_projection_plane(vec2d ndc, Camera& camera)
     );
 }
 
-// Uses Normalized Device Coordinates, NDC
-void Window::draw_pixel(vec2d ndc, color_t c)
+void Window::draw_pixel(vec2i pos, color_t c)
 {
     SDL_SetRenderDrawColor(this->sdl_renderer, c.r, c.g, c.b, c.a);
-    SDL_RenderDrawPoint(this->sdl_renderer, ((ndc.x + 1) * this->dimensions.x) / 2,
-                                            ((ndc.y + 1) * this->dimensions.y) / 2);
+    SDL_RenderDrawPoint(this->sdl_renderer, pos.x, pos.y);
 }

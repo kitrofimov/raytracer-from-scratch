@@ -28,6 +28,6 @@ if(MSVC)
   target_compile_options(${EXECUTABLE_NAME} PRIVATE /W4 /WX)
 else()
   target_compile_options(${EXECUTABLE_NAME} PRIVATE
-                         -Wall -Wextra -Wpedantic -Wno-unused)
+                         -Wall -Wextra -Wpedantic -Wno-unused -std=c++20 -march=native)
 endif()
 target_include_directories(${EXECUTABLE_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

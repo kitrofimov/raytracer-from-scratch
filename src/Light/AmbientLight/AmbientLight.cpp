@@ -17,3 +17,8 @@ vec3d AmbientLight::get_point_to_light_source_vector(vec3d& point)
 {
     return vec3d(0, 0, 0);
 }
+
+LightSourceType AmbientLight::get_type()
+{
+    return LightSourceType::AmbientLight;
+}

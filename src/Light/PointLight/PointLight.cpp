@@ -13,3 +13,8 @@ vec3d PointLight::get_point_to_light_source_vector(vec3d& point)
 {
     return this->position - point;
 }
+
+LightSourceType PointLight::get_type()
+{
+    return LightSourceType::PointLight;
+}

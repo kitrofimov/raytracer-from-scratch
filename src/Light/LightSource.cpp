@@ -2,6 +2,7 @@
 #include "LightSource.hpp"
 #include "Sphere/Sphere.hpp"
 #include "utils/clamp_at_zero.hpp"
+#include "utils/reflect_ray.hpp"
 
 // Calculate intensity of light at some point
 double LightSource::calculate_intensity(vec3d& point, vec3d& normal, vec3d& camera_pos,
@@ -16,9 +17,8 @@ double LightSource::calculate_intensity(vec3d& point, vec3d& normal, vec3d& came
     double specular_term = 0;
     if (!std::isnan(p_object->get_shininess()))  // if this object is somewhat shiny
     {
-        // "real" reflection vector (assuming the surface is perfectly polished, like a mirror)
-        vec3d R = normal * 2 * (normal * L) - L;
-        vec3d V = camera_pos - point;  // point -> camera
+        vec3d R = reflect_ray(L, normal);  // "real" reflection vector (like a mirror)
+        vec3d V = camera_pos - point;      // point -> camera
 
         specular_term = (R * V) / (R.magnitude() * V.magnitude());
         clamp_at_zero(specular_term);

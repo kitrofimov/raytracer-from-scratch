@@ -10,7 +10,7 @@ inline std::array<T, 2> solve_quadratic(T a, T b, T c)
     if (D < 0)
         return {qNaN, qNaN};
     return {
-        (-b + std::sqrt(D)) / 2*a,
-        (-b - std::sqrt(D)) / 2*a
+        (-b + std::sqrt(D)) / (2*a),
+        (-b - std::sqrt(D)) / (2*a)
     };
 }
