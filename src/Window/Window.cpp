@@ -58,7 +58,7 @@ vec3d Window::ndc_to_projection_plane(vec2d ndc, Camera& camera)
     return vec3d(
         -ndc.x * camera.get_projection_plane_dims().x,
         -ndc.y * camera.get_projection_plane_dims().y,
-        camera.get_near_plane()
+        camera.get_near_plane_distance()
     );
 }
 

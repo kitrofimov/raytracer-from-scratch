@@ -20,7 +20,6 @@
 
 using json = nlohmann::json;
 
-// Parse the scene form a JSON file
 Scene::Scene(std::filesystem::path scene_file_path)
 {
     // Read the file, parse JSON
@@ -158,7 +157,6 @@ Scene::Scene(std::vector<std::unique_ptr<Sphere>> &objects,
 
 void Scene::render(Window& window, Camera& camera)
 {
-    // For every pixel in the window
     for (int y = 0; y < window.get_dimensions().y; y++)
     {
         for (int x = 0; x < window.get_dimensions().x; x++)
@@ -173,8 +171,6 @@ void Scene::render(Window& window, Camera& camera)
     }
 }
 
-// Cast the ray from origin to specified direction
-// `r` - recursive parameter, only used internally by recursion
 color_t Scene::cast_ray(vec3d origin, vec3d direction, int r)
 {
     if (r == CAST_RAY_RECURSIVE_LIMIT)  // recursion limit
@@ -216,22 +212,18 @@ color_t Scene::cast_ray(vec3d origin, vec3d direction, int r)
     return t_buffer[t_buffer.begin()->first];
 }
 
-// Find a distance to closest intersection with an object (Sphere)
-// Returns quiet NaN to show that there is no intersections at all or they are behind the camera
-// Ignores t = 0 (does not count `point` itself as intersection)
 double Scene::find_closest_intersection(vec3d& point, vec3d& direction, std::unique_ptr<Sphere>& p_object)
 {
-    vec3d CO = point - p_object->get_position();  // sphere's center -> point
+    vec3d c2p = point - p_object->get_position();  // sphere's center -> point
     double a = direction * direction;
-    double b = 2 * (CO * direction);
-    double c = (CO * CO) - std::pow(p_object->get_radius(), 2);
+    double b = 2 * (c2p * direction);
+    double c = (c2p * c2p) - std::pow(p_object->get_radius(), 2);
 
     auto distances = solve_quadratic(a, b, c);
     double t = smallest_positive_in_container(distances);
     return t;
 }
 
-// Calculate light intensity from all light sources at a given point with a given normal
 color_t Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
                                std::unique_ptr<Sphere>& p_object)
 {
@@ -254,7 +246,6 @@ color_t Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
     return color_t::mix(list);
 }
 
-// Determine whether or not given `point` is in shadow from given `p_light_source`
 bool Scene::in_shadow(vec3d& point, std::unique_ptr<LightSource>& p_light_source)
 {
     if (p_light_source->get_type() == LightSourceType::AmbientLight)
