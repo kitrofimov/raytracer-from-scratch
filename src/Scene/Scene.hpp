@@ -7,7 +7,9 @@
 #include "utils/color/color.hpp"
 #include "utils/vec/vec3.hpp"
 
+class Renderer;
 class Window;
+class TerminalRenderer;
 class Camera;
 
 class Scene
@@ -21,7 +23,7 @@ public:
           Color background_color = Color(0, 0, 0, 255));
 
     // Render the scene
-    void render(Window& window, Camera& camera);
+    void render(std::unique_ptr<Renderer>& renderer, Camera& camera);
 
     // Cast the ray from origin to specified direction
     // `r` - recursive parameter, only used internally by recursion

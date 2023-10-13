@@ -20,7 +20,7 @@
             "type": "Sphere",
             "position": [0, 1.5, 4],
             "radius": 1,
-            "color": [0, 0, 155, 255],
+            "color": [255, 255, 0, 255],
             "shininess": "NaN",
             "reflectiveness": 0.75
         },
@@ -39,11 +39,6 @@
             "intensity": 1,
             "color": [255, 255, 255, 255],
             "position": [0, 0, 0]
-        },
-        {
-            "type": "AmbientLight",
-            "intensity": 0.1,
-            "color": [255, 255, 255, 255]
         }
     ],
     "background_color": [0, 0, 0, 255]
