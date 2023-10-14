@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <stdexcept>
 #include "TerminalRenderer.hpp"
 #include "ansi_codes.hpp"
@@ -54,4 +55,10 @@ std::string TerminalRenderer::rgb_to_ansi(Color c)
 
     throw std::runtime_error("shade is not in specified 8 buckets!");
     return "";
+}
+
+void TerminalRenderer::save_buffer(std::string filename)
+{
+    std::ofstream file(filename + ".ans", std::ios::out);
+    file << this->concatenate_buffer();
 }

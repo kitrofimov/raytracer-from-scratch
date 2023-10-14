@@ -47,10 +47,10 @@ bool Argparser::does_argument_exist(std::string argv, std::string arg)
 
 std::string Argparser::get_argument_option(std::string argv, std::string arg)
 {
-    int begin = argv.find(arg);
+    std::size_t begin = argv.find(arg);
     if (begin == std::string::npos)
         return std::string();
     begin = begin + arg.length() + 1;
-    int end = argv.find(" ", begin);
+    std::size_t end = argv.find(" ", begin);
     return argv.substr(begin, end - begin);
 }

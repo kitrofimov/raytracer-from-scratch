@@ -11,6 +11,7 @@ public:
     void poll_events() override;
     void swap_buffers() override;
     void draw_pixel(vec2i pos, Color c) override;
+    void save_buffer(std::string filename) override;
 
 private:
     std::vector<std::vector<std::string>> buffer;

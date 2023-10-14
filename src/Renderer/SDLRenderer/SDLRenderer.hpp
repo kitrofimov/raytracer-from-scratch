@@ -5,15 +5,16 @@
 #include "utils/vec/vec2.hpp"
 #include "utils/color/color.hpp"
 
-class Window : public Renderer
+class SDLRenderer : public Renderer
 {
 public:
-    Window(vec2i dimensions);
-    ~Window() override;
+    SDLRenderer(vec2i dimensions);
+    ~SDLRenderer() override;
 
     void poll_events() override;
     void swap_buffers() override;
     void draw_pixel(vec2i pos, Color c) override;
+    virtual void save_buffer(std::string filename) override;
 
 private:
     SDL_Window *sdl_window;

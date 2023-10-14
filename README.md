@@ -54,8 +54,6 @@ That means if you want your directional light to be white, 100% intense and to "
 
 ## TODO/NOTES
 New features:
-- [ ] Test `Argparser` class
-- [ ] Add `save` CLI parameter
 - [ ] Add other primitives
     - [ ] Planes
     - [ ] Mathematical functions

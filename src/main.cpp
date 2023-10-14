@@ -17,9 +17,12 @@ int main(int argc, char** argv)
 {
     // Argument parsing
     std::vector<std::string> boolean_args = {
-        "--terminal-rendering"
+        "--terminal-rendering",
+        "--save"
     };
-    std::unordered_map<std::string, std::string> string_args = {};
+    std::unordered_map<std::string, std::string> string_args = {
+        {"--save-filename", "render"}
+    };
     Argparser argparser(argc, argv, boolean_args, string_args);
 
     if (argparser.help)
@@ -29,6 +32,8 @@ int main(int argc, char** argv)
             "https://github.com/fahlerile/raytracer-from-scratch\n\n"
             "Available CLI options:\n"
             "--terminal-rendering - render in terminal using colored ASCII\n"
+            "--save - save rendered image to .BMP, or to .ANS if --terminal-rendering (open .ANS with cat tool)"
+            "--save-filename={FILENAME} - file to save rendered image to (works only if --save is enabled)"
             "--help - show this message"
         << std::endl;
         return 0;
@@ -42,7 +47,7 @@ int main(int argc, char** argv)
     if (argparser.parsed_boolean["--terminal-rendering"])
         renderer = std::make_unique<TerminalRenderer>(get_terminal_size());
     else
-        renderer = std::make_unique<Window>(vec2i(512, 512));
+        renderer = std::make_unique<SDLRenderer>(vec2i(512, 512));
 
     // Render the scene
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -52,6 +57,8 @@ int main(int argc, char** argv)
     std::cout << "Rendered in " << ms.count() << "ms" << std::endl;
 
     renderer->swap_buffers();
+    if (argparser.parsed_boolean["--save"])
+        renderer->save_buffer(argparser.parsed_string["--save-filename"]);
 
     if (!argparser.parsed_boolean["--terminal-rendering"])
     {

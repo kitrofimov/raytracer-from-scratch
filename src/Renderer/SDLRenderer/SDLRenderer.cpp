@@ -5,7 +5,7 @@
 #include "Camera/Camera.hpp"
 #include "constants.hpp"
 
-Window::Window(vec2i dimensions)
+SDLRenderer::SDLRenderer(vec2i dimensions)
 {
     this->dimensions = dimensions;
     if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -16,14 +16,14 @@ Window::Window(vec2i dimensions)
     SDL_CreateWindowAndRenderer(dimensions.x, dimensions.y, 0, &(this->sdl_window), &(this->sdl_renderer));
 }
 
-Window::~Window()
+SDLRenderer::~SDLRenderer()
 {
     SDL_DestroyRenderer(this->sdl_renderer);
     SDL_DestroyWindow(this->sdl_window);
     SDL_Quit();
 }
 
-void Window::poll_events()
+void SDLRenderer::poll_events()
 {
     while (SDL_PollEvent(&(this->sdl_event)))
     {
@@ -34,13 +34,22 @@ void Window::poll_events()
     }
 }
 
-void Window::swap_buffers()
+void SDLRenderer::swap_buffers()
 {
     SDL_RenderPresent(this->sdl_renderer);
 }
 
-void Window::draw_pixel(vec2i pos, Color c)
+void SDLRenderer::draw_pixel(vec2i pos, Color c)
 {
     SDL_SetRenderDrawColor(this->sdl_renderer, c.r, c.g, c.b, c.a);
     SDL_RenderDrawPoint(this->sdl_renderer, pos.x, pos.y);
+}
+
+void SDLRenderer::save_buffer(std::string filename)
+{
+    SDL_Surface* shot = SDL_CreateRGBSurface(0, this->dimensions.x, this->dimensions.y, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+    SDL_RenderReadPixels(this->sdl_renderer, NULL, SDL_PIXELFORMAT_ARGB8888, shot->pixels, shot->pitch);
+    filename += ".bmp";
+    SDL_SaveBMP(shot, filename.c_str());
+    SDL_FreeSurface(shot);
 }

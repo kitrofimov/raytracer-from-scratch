@@ -15,6 +15,7 @@ public:
     virtual void poll_events() = 0;
     virtual void swap_buffers() = 0;
     virtual void draw_pixel(vec2i pos, Color c) = 0;
+    virtual void save_buffer(std::string filename) = 0;
 
     inline bool is_running() { return running; }
     inline vec2i get_dimensions() { return dimensions; }

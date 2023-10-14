@@ -8,7 +8,7 @@
 #include "utils/vec/vec3.hpp"
 
 class Renderer;
-class Window;
+class SDLRenderer;
 class TerminalRenderer;
 class Camera;
 
