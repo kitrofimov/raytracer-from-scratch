@@ -1,6 +1,7 @@
 #define SDL_MAIN_HANDLED
 #include <iostream>
 #include <unordered_map>
+#include <vector>
 #include <chrono>
 
 #include "Renderer/SDLRenderer/SDLRenderer.hpp"
@@ -15,8 +16,8 @@
 int main(int argc, char** argv)
 {
     // Argument parsing
-    std::unordered_map<std::string, bool> boolean_args = {
-        {"terminal-rendering", false}
+    std::vector<std::string> boolean_args = {
+        "--terminal-rendering"
     };
     std::unordered_map<std::string, std::string> string_args = {};
     Argparser argparser(argc, argv, boolean_args, string_args);
@@ -38,7 +39,7 @@ int main(int argc, char** argv)
     Scene scene(scene_file_path);
     std::unique_ptr<Renderer> renderer;
 
-    if (argparser.parsed_boolean["terminal-rendering"])
+    if (argparser.parsed_boolean["--terminal-rendering"])
         renderer = std::make_unique<TerminalRenderer>(get_terminal_size());
     else
         renderer = std::make_unique<Window>(vec2i(512, 512));
@@ -52,7 +53,7 @@ int main(int argc, char** argv)
 
     renderer->swap_buffers();
 
-    if (!argparser.parsed_boolean["terminal-rendering"])
+    if (!argparser.parsed_boolean["--terminal-rendering"])
     {
         while (renderer->is_running())
         {

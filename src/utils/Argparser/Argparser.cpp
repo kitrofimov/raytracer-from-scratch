@@ -4,25 +4,33 @@
 #include <algorithm>
 #include "Argparser.hpp"
 
-Argparser::Argparser(int argc, char** argv, std::unordered_map<std::string, bool> boolean_args,
+Argparser::Argparser(int argc, char** argv, std::vector<std::string> boolean_args,
                      std::unordered_map<std::string, std::string> string_args)
 {
+    // Convert argument vector to contiguous string
     std::string args;
     for (int i = 1; i < argc; i++)
         args += (std::string(argv[i]) + " ");
 
-    if (this->does_argument_exist(args, "help"))
+    // Check for --help flag
+    if (this->does_argument_exist(args, "--help"))
     {
         this->help = true;
         return;
     }
     this->help = false;
 
-    this->parsed_boolean = boolean_args;
+    // Initialize parsed maps
     this->parsed_string = string_args;
+    for (auto& arg : boolean_args)
+        this->parsed_boolean[arg] = false;
 
-    for (auto& pair : boolean_args)
-        this->parsed_boolean[pair.first] = this->does_argument_exist(args, pair.first);
+    // Parse arguments
+    for (auto& arg : boolean_args)
+    {
+        bool temp = this->does_argument_exist(args, arg);
+        this->parsed_boolean[arg] = temp;
+    }
 
     for (auto& pair : string_args)
     {
@@ -39,7 +47,10 @@ bool Argparser::does_argument_exist(std::string argv, std::string arg)
 
 std::string Argparser::get_argument_option(std::string argv, std::string arg)
 {
-    int begin = argv.find(arg) + arg.length() + 1;
+    int begin = argv.find(arg);
+    if (begin == std::string::npos)
+        return std::string();
+    begin = begin + arg.length() + 1;
     int end = argv.find(" ", begin);
-    return argv.substr(begin, end);
+    return argv.substr(begin, end - begin);
 }

@@ -9,7 +9,7 @@ class Argparser
 public:
     // `argv` - raw argument string, `boolean_args` - a map of boolean_arg:default_value,
     // `string_args` - a map of string_arg:default_value, `help_message` - help message
-    Argparser(int argc, char** argv, std::unordered_map<std::string, bool> boolean_args,
+    Argparser(int argc, char** argv, std::vector<std::string> boolean_args,
               std::unordered_map<std::string, std::string> string_args);
 
     std::unordered_map<std::string, bool> parsed_boolean;
