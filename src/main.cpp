@@ -2,7 +2,7 @@
 #include <iostream>
 #include <chrono>
 
-#include "Renderer/Window/Window.hpp"
+#include "Renderer/SDLRenderer/SDLRenderer.hpp"
 #include "Renderer/TerminalRenderer/TerminalRenderer.hpp"
 #include "Camera/Camera.hpp"
 #include "Scene/Scene.hpp"

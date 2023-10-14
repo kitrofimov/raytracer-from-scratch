@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SDL2/SDL.h>
 #include "utils/vec/vec2.hpp"
-#include "Window.hpp"
+#include "SDLRenderer.hpp"
 #include "Camera/Camera.hpp"
 #include "constants.hpp"
 
