@@ -1,6 +1,10 @@
 # raytracer-from-scratch
 
-A raytracer which uses left-hand coordinate system and in which camera looks in `+Z` direction by default.
+A raytracer which uses left-hand coordinate system and in which camera looks in `+Z` direction by default. Supports normal (pixel-based) and terminal-based rendering!
+
+![Normal rendering](images/normal-rendering.png)
+
+![Terminal rendering](images/terminal-based-rendering.png)
 
 Features:
 - Sphere primitive
@@ -23,6 +27,13 @@ cd bin
 ```
 
 # Use
+
+## CLI options
+- `--help` - show help message
+- `--terminal-rendering` - use terminal rendering
+
+## Scene configuration
+
 To configure your scene, you should change `scene.json` in `bin/` directory. All available primitives and light sources are listed in [`Sphere`](Sphere/) and [`Light`](Light/) header files. In your JSON file you should put the same arguments as requested in these primitives/light sources constructors.
 
 ## Example:
@@ -43,7 +54,6 @@ That means if you want your directional light to be white, 100% intense and to "
 
 ## TODO/NOTES
 New features:
-- [ ] Add console renderer
 - [ ] Add other primitives
     - [ ] Planes
     - [ ] Mathematical functions
@@ -52,6 +62,7 @@ New features:
     - [ ] Torus
     - [ ] Polygon
 - [ ] Camera transform (camera matrix)
+- [ ] Camera configuration in `scene.json`
 - [ ] Real-time rendering, camera movement
 
 Potential bug causes:

@@ -4,7 +4,9 @@ set(
   main.cpp
 
   # Main
-  Window/Window.cpp
+  Renderer/Renderer.cpp
+  Renderer/SDLRenderer/SDLRenderer.cpp
+  Renderer/TerminalRenderer/TerminalRenderer.cpp
   Camera/Camera.cpp
   Scene/Scene.cpp
 
@@ -18,7 +20,9 @@ set(
   Light/DirectionalLight/DirectionalLight.cpp
 
   # Utility classes/functions
+  utils/Argparser/Argparser.cpp
   utils/Color/Color.cpp
+  utils/get_terminal_size/get_terminal_size.cpp
 )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")

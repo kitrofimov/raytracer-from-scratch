@@ -7,7 +7,7 @@
 
 #include "Scene.hpp"
 #include "Sphere/Sphere.hpp"
-#include "Window/Window.hpp"
+#include "Renderer/Renderer.hpp"
 #include "Camera/Camera.hpp"
 
 #include "utils/vec/vec.hpp"
@@ -154,18 +154,19 @@ Scene::Scene(std::vector<std::unique_ptr<Sphere>> &objects,
     this->background_color = background_color;
 }
 
-void Scene::render(Window& window, Camera& camera)
+void Scene::render(std::unique_ptr<Renderer>& renderer, Camera& camera)
 {
-    for (int y = 0; y < window.get_dimensions().y; y++)
+    vec2i dimensions = renderer->get_dimensions();
+    for (int y = 0; y < dimensions.y; y++)
     {
-        for (int x = 0; x < window.get_dimensions().x; x++)
+        for (int x = 0; x < dimensions.x; x++)
         {
-            vec2d ndc = window.pixel_to_ndc(vec2i(x, y));
-            vec3d point_on_projection_plane = window.ndc_to_projection_plane(ndc, camera);
+            vec2d ndc = renderer->pixel_to_ndc(vec2i(x, y));
+            vec3d point_on_projection_plane = renderer->ndc_to_projection_plane(ndc, camera);
             vec3d ray_direction = (point_on_projection_plane - camera.get_position()).normalize();
 
             Color color = this->cast_ray(camera.get_position(), ray_direction);
-            window.draw_pixel(vec2i(x, y), color);
+            renderer->draw_pixel(vec2i(x, y), color);
         }
     }
 }
