@@ -1,5 +1,6 @@
 #define SDL_MAIN_HANDLED
 #include <iostream>
+#include <unordered_map>
 #include <chrono>
 
 #include "Renderer/SDLRenderer/SDLRenderer.hpp"
@@ -8,26 +9,28 @@
 #include "Scene/Scene.hpp"
 #include "utils/vec/vec.hpp"
 #include "utils/get_terminal_size/get_terminal_size.hpp"
+#include "utils/Argparser/Argparser.hpp"
 #include "constants.hpp"
-
-void print_help();
 
 int main(int argc, char** argv)
 {
-    bool terminal_rendering;
-    vec2i terminal_dimensions;
-    for (int i = 1; i < argc; i++)
+    // Argument parsing
+    std::unordered_map<std::string, bool> boolean_args = {
+        {"terminal-rendering", false}
+    };
+    std::unordered_map<std::string, std::string> string_args = {};
+    Argparser argparser(argc, argv, boolean_args, string_args);
+
+    if (argparser.help)
     {
-        std::string arg(argv[i]);
-        if (arg == "--help")
-            print_help();
-        else if (arg == "--terminal-rendering")
-        {
-            terminal_rendering = true;
-            terminal_dimensions = get_terminal_size();
-        }
-        else
-            print_help();
+        std::cout <<
+            "RAYTRACER made by fahlerile\n"
+            "https://github.com/fahlerile/raytracer-from-scratch\n\n"
+            "Available CLI options:\n"
+            "--terminal-rendering - render in terminal using colored ASCII\n"
+            "--help - show this message"
+        << std::endl;
+        return 0;
     }
 
     // Initialization
@@ -35,10 +38,10 @@ int main(int argc, char** argv)
     Scene scene(scene_file_path);
     std::unique_ptr<Renderer> renderer;
 
-    if (!terminal_rendering)
-        renderer = std::make_unique<Window>(vec2i(512, 512));
+    if (argparser.parsed_boolean["terminal-rendering"])
+        renderer = std::make_unique<TerminalRenderer>(get_terminal_size());
     else
-        renderer = std::make_unique<TerminalRenderer>(terminal_dimensions);
+        renderer = std::make_unique<Window>(vec2i(512, 512));
 
     // Render the scene
     auto t1 = std::chrono::high_resolution_clock::now();
@@ -49,7 +52,7 @@ int main(int argc, char** argv)
 
     renderer->swap_buffers();
 
-    if (!terminal_rendering)
+    if (!argparser.parsed_boolean["terminal-rendering"])
     {
         while (renderer->is_running())
         {
@@ -59,14 +62,4 @@ int main(int argc, char** argv)
     }
 
     return 0;
-}
-
-void print_help()
-{
-    std::cout << "RAYTRACER made by fahlerile\n"
-                 "https://github.com/fahlerile/raytracer-from-scratch\n\n"
-                 "Available CLI options:\n"
-                 "--terminal-rendering - render in terminal using colored ASCII\n"
-                 "--help - show this message" << std::endl;
-    std::exit(0);
 }

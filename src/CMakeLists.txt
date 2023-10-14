@@ -5,7 +5,7 @@ set(
 
   # Main
   Renderer/Renderer.cpp
-  Renderer/Window/Window.cpp
+  Renderer/SDLRenderer/SDLRenderer.cpp
   Renderer/TerminalRenderer/TerminalRenderer.cpp
   Camera/Camera.cpp
   Scene/Scene.cpp
@@ -20,6 +20,7 @@ set(
   Light/DirectionalLight/DirectionalLight.cpp
 
   # Utility classes/functions
+  utils/Argparser/Argparser.cpp
   utils/Color/Color.cpp
   utils/get_terminal_size/get_terminal_size.cpp
 )
