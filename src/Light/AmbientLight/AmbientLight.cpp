@@ -8,7 +8,7 @@ AmbientLight::AmbientLight(double intensity, Color color)
 }
 
 double AmbientLight::calculate_intensity(vec3d& point, vec3d& normal, vec3d& camera_pos,
-                                         std::unique_ptr<Sphere>& p_object)
+                                         std::unique_ptr<Object>& p_object)
 {
     return this->intensity;
 }

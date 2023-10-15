@@ -1,6 +1,6 @@
 #include <stdexcept>
 #include <vector>
-#include "color.hpp"
+#include "Color.hpp"
 #include "utils/vec/vec4.hpp"
 
 Color::Color()

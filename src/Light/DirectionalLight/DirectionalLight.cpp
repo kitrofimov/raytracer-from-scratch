@@ -1,4 +1,3 @@
-#include "Sphere/Sphere.hpp"
 #include "DirectionalLight.hpp"
 #include "utils/vec/vec3.hpp"
 

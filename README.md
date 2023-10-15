@@ -57,10 +57,10 @@ New features:
 - [ ] Add other primitives
     - [ ] Planes
     - [ ] Mathematical functions
+    - [ ] Polygon
     - [ ] Cylinder
     - [ ] Cone
     - [ ] Torus
-    - [ ] Polygon
 - [ ] Camera transform (camera matrix)
 - [ ] Camera configuration in `scene.json`
 - [ ] Real-time rendering, camera movement

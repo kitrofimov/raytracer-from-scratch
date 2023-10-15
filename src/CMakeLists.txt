@@ -11,7 +11,8 @@ set(
   Scene/Scene.cpp
 
   # Objects
-  Sphere/Sphere.cpp
+  Object/Object.cpp
+  Object/Sphere/Sphere.cpp
 
   # Light sources
   Light/LightSource.cpp

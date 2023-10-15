@@ -6,7 +6,8 @@
 #include <nlohmann/json.hpp>
 
 #include "Scene.hpp"
-#include "Sphere/Sphere.hpp"
+#include "Object/Object.hpp"
+#include "Object/Sphere/Sphere.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Camera/Camera.hpp"
 
@@ -45,7 +46,7 @@ Scene::Scene(std::filesystem::path scene_file_path)
     }
 
     // Parse objects
-    std::vector<std::unique_ptr<Sphere>> objects;
+    std::vector<std::unique_ptr<Object>> objects;
     std::vector<std::unique_ptr<LightSource>> light_sources;
     try
     {
@@ -145,7 +146,7 @@ Scene::Scene(std::filesystem::path scene_file_path)
     this->background_color = background_color;
 }
 
-Scene::Scene(std::vector<std::unique_ptr<Sphere>> &objects,
+Scene::Scene(std::vector<std::unique_ptr<Object>> &objects,
              std::vector<std::unique_ptr<LightSource>> &light_sources,
              Color background_color)
 {
@@ -180,7 +181,7 @@ Color Scene::cast_ray(vec3d origin, vec3d direction, int r)
 
     for (auto &p_object : this->objects)
     {
-        double t = this->find_closest_intersection(origin, direction, p_object);
+        double t = p_object->find_closest_intersection(origin, direction);
         if (std::isnan(t))
             continue;
 
@@ -212,17 +213,8 @@ Color Scene::cast_ray(vec3d origin, vec3d direction, int r)
     return t_buffer[t_buffer.begin()->first];
 }
 
-double Scene::find_closest_intersection(vec3d& point, vec3d& direction, std::unique_ptr<Sphere>& p_object)
-{
-    vec3d c2p = point - p_object->get_position();  // sphere's center -> point
-    double a = direction * direction;
-    double b = 2 * (c2p * direction);
-    double c = (c2p * c2p) - std::pow(p_object->get_radius(), 2);
-    return solve_quadratic_for_smallest_positive(a, b, c);
-}
-
 Color Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
-                               std::unique_ptr<Sphere>& p_object)
+                               std::unique_ptr<Object>& p_object)
 {
     std::vector<Color> list;
 
@@ -250,11 +242,11 @@ bool Scene::in_shadow(vec3d& point, std::unique_ptr<LightSource>& p_light_source
         return false;
     }
 
-    vec3d L = p_light_source->get_point_to_light_source_vector(point).normalize();
+    vec3d p2ls = p_light_source->get_point_to_light_source_vector(point).normalize();
 
     for (auto& p_object : this->objects)
     {
-        double t = this->find_closest_intersection(point, L, p_object);
+        double t = p_object->find_closest_intersection(point, p2ls);
         // if it is PointLight and distance to intersection is further away from light source,
         // then it is not in shadow
         if ((p_light_source->get_type() == LightSourceType::PointLight) && (t >= 1))

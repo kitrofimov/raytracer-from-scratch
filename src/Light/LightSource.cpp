@@ -1,10 +1,10 @@
 #include <memory>
 #include "LightSource.hpp"
-#include "Sphere/Sphere.hpp"
+#include "Object/Object.hpp"
 #include "utils/reflect_ray.hpp"
 
 double LightSource::calculate_intensity(vec3d& point, vec3d& normal, vec3d& camera_pos,
-                                        std::unique_ptr<Sphere>& p_object)
+                                        std::unique_ptr<Object>& p_object)
 {
     vec3d p2ls = this->get_point_to_light_source_vector(point);
     double intensity_at_point;
