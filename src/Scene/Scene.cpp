@@ -8,6 +8,7 @@
 #include "Scene.hpp"
 #include "Object/Object.hpp"
 #include "Object/Sphere/Sphere.hpp"
+#include "Object/Plane/Plane.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Camera/Camera.hpp"
 
@@ -48,96 +49,7 @@ Scene::Scene(std::filesystem::path scene_file_path)
     // Parse objects
     std::vector<std::unique_ptr<Object>> objects;
     std::vector<std::unique_ptr<LightSource>> light_sources;
-    try
-    {
-        for (auto& object : scene_data["objects"])
-        {
-            std::string type = object["type"];
-
-            if (type == "Sphere")
-            {
-                vec3d position = vec3d(std::vector<double>(object["position"]));
-                double radius = object["radius"];
-                Color color = Color(std::vector<unsigned char>(object["color"]));
-                double shininess;
-                double reflectiveness = object["reflectiveness"];
-
-                try  // if double
-                {
-                    shininess = object["shininess"];
-                }
-                catch (const json::type_error& e)  // if NaN (string)
-                {
-                    shininess = qNaN;
-                }
-
-                objects.emplace_back(std::make_unique<Sphere>(
-                    position,
-                    radius,
-                    color,
-                    shininess,
-                    reflectiveness
-                ));
-            }
-
-            else
-            {
-                throw JSONFormatError("Bad JSON format: there is no " + type + " object type");
-            }
-    }
-
-        // Parse light sources
-        for (auto& light_source : scene_data["light_sources"])
-        {
-            std::string type = light_source["type"];
-            double intensity = light_source["intensity"];
-            Color color = Color(std::vector<unsigned char>(light_source["color"]));
-
-            if (type == "AmbientLight")
-            {
-                light_sources.emplace_back(std::make_unique<AmbientLight>(
-                    intensity,
-                    color
-                ));
-            }
-
-            else if (type == "PointLight")
-            {
-                vec3d position = vec3d(std::vector<double>(light_source["position"]));
-                light_sources.emplace_back(std::make_unique<PointLight>(
-                    intensity,
-                    color,
-                    position
-                ));
-            }
-
-            else if (type == "DirectionalLight")
-            {
-                vec3d direction = vec3d(std::vector<double>(light_source["direction"]));
-                light_sources.emplace_back(std::make_unique<DirectionalLight>(
-                    intensity,
-                    color,
-                    direction
-                ));
-            }
-
-            else
-            {
-                throw JSONFormatError("Bad JSON format: there is no " + type + " light type");
-            }
-        }
-    }
-    catch (const JSONFormatError& e)
-    {
-        std::cerr << e.what() << std::endl;
-        std::exit(ERROR_CODE_JSON_FORMAT);
-    }
-    catch (const json::type_error& e)
-    {
-        std::cerr << "JSONFormatError\nMake sure you have valid scene file\nInternal error message:" << std::endl;
-        std::cerr << e.what() << std::endl;
-        std::exit(ERROR_CODE_JSON_FORMAT);
-    }
+    // TODO: add parser again
 
     Color background_color = Color(std::vector<unsigned char>(scene_data["background_color"]));
 
@@ -186,7 +98,7 @@ Color Scene::cast_ray(vec3d origin, vec3d direction, int r)
             continue;
 
         vec3d point = origin + direction * t;  // closest point of intersection
-        vec3d normal = (point - p_object->get_position()).normalize();
+        vec3d normal = p_object->get_normal(point);
 
         double reflectiveness = p_object->get_reflectiveness();
         Color local_color;

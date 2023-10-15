@@ -3,13 +3,13 @@
 #include "utils/vec/vec3.hpp"
 #include "utils/quadratic.hpp"
 
-Sphere::Sphere(vec3d position, double radius, Color color, double shininess, double reflectiveness)
+Sphere::Sphere(Color color, double shininess, double reflectiveness, vec3d position, double radius)
 {
-    this->position = position;
-    this->radius = radius;
     this->color = color;
     this->shininess = shininess;
     this->reflectiveness = reflectiveness;
+    this->position = position;
+    this->radius = radius;
 }
 
 double Sphere::find_closest_intersection(vec3d& point, vec3d& direction)
@@ -22,4 +22,9 @@ double Sphere::find_closest_intersection(vec3d& point, vec3d& direction)
     double b = 2 * (c2p * direction);
     double c = (c2p * c2p) - std::pow(this->radius, 2);
     return solve_quadratic_for_smallest_positive(a, b, c);
+}
+
+vec3d Sphere::get_normal(vec3d& point)
+{
+    return (point - this->position).normalize();
 }

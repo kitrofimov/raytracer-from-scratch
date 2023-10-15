@@ -54,6 +54,7 @@ That means if you want your directional light to be white, 100% intense and to "
 
 ## TODO/NOTES
 New features:
+- [ ] Clean-up `Scene` JSON constructor
 - [ ] Add other primitives
     - [ ] Planes
     - [ ] Mathematical functions
