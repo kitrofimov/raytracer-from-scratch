@@ -49,7 +49,26 @@ Scene::Scene(std::filesystem::path scene_file_path)
     // Parse objects
     std::vector<std::unique_ptr<Object>> objects;
     std::vector<std::unique_ptr<LightSource>> light_sources;
-    // TODO: add parser again
+
+    try
+    {
+        for (auto& object_data : scene_data["objects"])
+            objects.emplace_back(this->create_primitive(object_data));
+
+        for (auto& light_source_data : scene_data["light_sources"])
+            light_sources.emplace_back(this->create_light_source(light_source_data));
+    }
+    catch (const std::invalid_argument& e)
+    {
+        std::cerr << e.what() << std::endl;
+        std::exit(ERROR_CODE_JSON_UNKNOWN_TYPE);
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Unexpected exception. This is a bug, please report it. Internal message:" << std::endl;
+        std::cerr << e.what() << std::endl;
+        std::exit(ERROR_CODE_JSON_UNKNOWN_EXCEPTION);
+    }
 
     Color background_color = Color(std::vector<unsigned char>(scene_data["background_color"]));
 
@@ -167,4 +186,53 @@ bool Scene::in_shadow(vec3d& point, std::unique_ptr<LightSource>& p_light_source
             return true;
     }
     return false;
+}
+
+std::unique_ptr<Object> Scene::create_primitive(json data)
+{
+    Color color = Color(std::vector<unsigned char>(data["color"]));
+    double shininess;
+    if (data["shininess"].is_string())
+        shininess = qNaN;
+    else
+        shininess = double(data["shininess"]);
+    double reflectiveness = double(data["reflectiveness"]);
+
+    if (data["type"] == "Sphere")
+    {
+        vec3d position = vec3d(std::vector<double>(data["position"]));
+        double radius = double(data["radius"]);
+        return std::make_unique<Sphere>(color, shininess, reflectiveness, position, radius);
+    }
+    else if (data["type"] == "Plane")
+    {
+        vec3d normal = vec3d(std::vector<double>(data["normal"]));
+        vec3d point = vec3d(std::vector<double>(data["point"]));
+        return std::make_unique<Plane>(color, shininess, reflectiveness, point, normal);
+    }
+
+    throw std::invalid_argument("Unknown object (primitive) type: " + std::string(data["type"]));
+}
+
+std::unique_ptr<LightSource> Scene::create_light_source(json data)
+{
+    double intensity = double(data["intensity"]);
+    Color color = Color(std::vector<unsigned char>(data["color"]));
+
+    if (data["type"] == "AmbientLight")
+    {
+        return std::make_unique<AmbientLight>(intensity, color);
+    }
+    else if (data["type"] == "DirectionalLight")
+    {
+        vec3d direction = vec3d(std::vector<double>(data["direction"]));
+        return std::make_unique<DirectionalLight>(intensity, color, direction);
+    }
+    else if (data["type"] == "PointLight")
+    {
+        vec3d position = vec3d(std::vector<double>(data["position"]));
+        return std::make_unique<PointLight>(intensity, color, position);
+    }
+
+    throw std::invalid_argument("Unknown light source type: " + std::string(data["type"]));
 }

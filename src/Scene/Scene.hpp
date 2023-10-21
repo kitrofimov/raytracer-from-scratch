@@ -3,11 +3,15 @@
 #include <vector>
 #include <memory>
 #include <filesystem>
+#include <nlohmann/json.hpp>
+
 #include "Object/Object.hpp"
 #include "Object/Sphere/Sphere.hpp"
 #include "Light/Light.hpp"
 #include "utils/color/color.hpp"
 #include "utils/vec/vec3.hpp"
+
+using json = nlohmann::json;
 
 class Renderer;
 class SDLRenderer;
@@ -42,4 +46,8 @@ private:
     std::vector<std::unique_ptr<Object>> objects;
     std::vector<std::unique_ptr<LightSource>> light_sources;
     Color background_color;
+
+    // Internal functions that help to parse objects from JSON (file path constructor)
+    static std::unique_ptr<Object> create_primitive(json data);
+    static std::unique_ptr<LightSource> create_light_source(json data);
 };

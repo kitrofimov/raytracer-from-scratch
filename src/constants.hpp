@@ -7,6 +7,8 @@ constexpr int ERROR_CODE_SDL_INIT_FAIL = 1;
 constexpr int ERROR_CODE_FILE_EXCEPTION = 2;
 constexpr int ERROR_CODE_JSON_PARSE = 3;
 constexpr int ERROR_CODE_JSON_FORMAT = 4;
+constexpr int ERROR_CODE_JSON_UNKNOWN_TYPE = 5;
+constexpr int ERROR_CODE_JSON_UNKNOWN_EXCEPTION = 6;
 
 // Numeric constants
 constexpr double qNaN = std::numeric_limits<double>::quiet_NaN();
