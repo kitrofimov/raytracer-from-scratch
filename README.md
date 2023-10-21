@@ -54,7 +54,8 @@ That means if you want your directional light to be white, 100% intense and to "
 
 ## TODO/NOTES
 New features:
-- [ ] Fix plane rendering visual bug
+- [ ] Fix/check/test plane is not infinite (black sky)
+- [ ] `AmbientLight::intensity` is being implicitly upscaled to `0.2` in `Scene::calculate_color`
 - [ ] Add other primitives
     - [ ] Planes
     - [ ] Mathematical functions

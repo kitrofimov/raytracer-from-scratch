@@ -12,6 +12,7 @@ Plane::Plane(Color color, double shininess, double reflectiveness,
     this->normal = normal.normalize();
 }
 
+// `point` - start of a ray
 double Plane::find_closest_intersection(vec3d& point, vec3d& direction)
 {
     // Let there be a ray P + tD and plane N*A = N*B (N - normal, A and B - points on the plane)
@@ -22,7 +23,8 @@ double Plane::find_closest_intersection(vec3d& point, vec3d& direction)
     // N*D*t = N*A - N*P
     // t = ( N(A - P) ) / ( N*D )
 
-    return ( this->normal * (this->point - point) ) / ( this->normal * direction );
+    double t = ( this->normal * (this->point - point) ) / ( this->normal * direction );
+    return (t > tolerance) ? t : qNaN;
 }
 
 vec3d Plane::get_normal(vec3d& point)

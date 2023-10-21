@@ -97,13 +97,13 @@ void Scene::render(std::unique_ptr<Renderer>& renderer, Camera& camera)
             vec3d point_on_projection_plane = renderer->ndc_to_projection_plane(ndc, camera);
             vec3d ray_direction = (point_on_projection_plane - camera.get_position()).normalize();
 
-            Color color = this->cast_ray(camera.get_position(), ray_direction);
+            Color color = this->cast_ray(camera.get_position(), ray_direction, camera.get_position());
             renderer->draw_pixel(vec2i(x, y), color);
         }
     }
 }
 
-Color Scene::cast_ray(vec3d origin, vec3d direction, int r)
+Color Scene::cast_ray(vec3d origin, vec3d direction, vec3d camera_pos, int r)
 {
     if (r == CAST_RAY_RECURSIVE_LIMIT)  // recursion limit
         return Color(0, 0, 0, 0);
@@ -126,11 +126,11 @@ Color Scene::cast_ray(vec3d origin, vec3d direction, int r)
         if (reflectiveness != 0)
         {
             vec3d reflection_direction = reflect_ray(-direction, normal);
-            reflection_color = this->cast_ray(point, reflection_direction, r + 1);
+            reflection_color = this->cast_ray(point, reflection_direction, camera_pos, r + 1);
         }
         if (reflectiveness != 1)
         {
-            local_color = this->calculate_color(point, normal, origin, p_object);
+            local_color = this->calculate_color(point, normal, camera_pos, p_object);
         }
 
         t_buffer[t] = lerp(local_color, reflection_color, reflectiveness);
@@ -145,7 +145,7 @@ Color Scene::cast_ray(vec3d origin, vec3d direction, int r)
 }
 
 Color Scene::calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
-                               std::unique_ptr<Object>& p_object)
+                             std::unique_ptr<Object>& p_object)
 {
     std::vector<Color> list;
 

@@ -31,9 +31,9 @@ public:
     // Render the scene
     void render(std::unique_ptr<Renderer>& renderer, Camera& camera);
 
-    // Cast the ray from origin to specified direction
+    // Cast the ray from origin to specified direction, return the color in this direction
     // `r` - recursive parameter, only used internally by recursion
-    Color cast_ray(vec3d origin, vec3d direction, int r = 0);
+    Color cast_ray(vec3d origin, vec3d direction, vec3d camera_pos, int r = 0);
 
     // Calculate light intensity from all light sources at a given point with a given normal
     Color calculate_color(vec3d& point, vec3d& normal, vec3d& camera_pos,
