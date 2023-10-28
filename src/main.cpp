@@ -32,8 +32,8 @@ int main(int argc, char** argv)
             "https://github.com/fahlerile/raytracer-from-scratch\n\n"
             "Available CLI options:\n"
             "--terminal-rendering - render in terminal using colored ASCII\n"
-            "--save - save rendered image to .BMP, or to .ANS if --terminal-rendering (open .ANS with cat tool)"
-            "--save-filename={FILENAME} - file to save rendered image to (works only if --save is enabled)"
+            "--save - save rendered image to .BMP, or to .ANS if --terminal-rendering (open .ANS with cat tool)\n"
+            "--save-filename={FILENAME} - file to save rendered image to (works only if --save is enabled)\n"
             "--help - show this message"
         << std::endl;
         return 0;

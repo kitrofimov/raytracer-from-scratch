@@ -6,9 +6,7 @@
 #include <nlohmann/json.hpp>
 
 #include "Scene.hpp"
-#include "Object/Object.hpp"
-#include "Object/Sphere/Sphere.hpp"
-#include "Object/Plane/Plane.hpp"
+#include "Object/Objects.hpp"
 #include "Renderer/Renderer.hpp"
 #include "Camera/Camera.hpp"
 
@@ -206,9 +204,26 @@ std::unique_ptr<Object> Scene::create_primitive(json data)
     }
     else if (data["type"] == "Plane")
     {
-        vec3d normal = vec3d(std::vector<double>(data["normal"]));
-        vec3d point = vec3d(std::vector<double>(data["point"]));
-        return std::make_unique<Plane>(color, shininess, reflectiveness, point, normal);
+        try
+        {
+            vec3d normal = vec3d(std::vector<double>(data["normal"]));
+            vec3d point = vec3d(std::vector<double>(data["point"]));
+            return std::make_unique<Plane>(color, shininess, reflectiveness, point, normal);
+        }
+        catch (std::exception& e)
+        {
+            vec3d point1 = vec3d(std::vector<double>(data["point1"]));
+            vec3d point2 = vec3d(std::vector<double>(data["point2"]));
+            vec3d point3 = vec3d(std::vector<double>(data["point3"]));
+            return std::make_unique<Plane>(color, shininess, reflectiveness, point1, point2, point3);
+        }
+    }
+    else if (data["type"] == "Triangle")
+    {
+        vec3d A = vec3d(std::vector<double>(data["A"]));
+        vec3d B = vec3d(std::vector<double>(data["B"]));
+        vec3d C = vec3d(std::vector<double>(data["C"]));
+        return std::make_unique<Triangle>(color, shininess, reflectiveness, A, B, C);
     }
 
     throw std::invalid_argument("Unknown object (primitive) type: " + std::string(data["type"]));

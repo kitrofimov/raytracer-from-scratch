@@ -13,6 +13,7 @@ set(
   # Objects
   Object/Sphere/Sphere.cpp
   Object/Plane/Plane.cpp
+  Object/Triangle/Triangle.cpp
 
   # Light sources
   Light/LightSource.cpp
