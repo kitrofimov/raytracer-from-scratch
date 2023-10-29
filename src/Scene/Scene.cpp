@@ -225,6 +225,14 @@ std::unique_ptr<Object> Scene::create_primitive(json data)
             vertices.emplace_back(vertex[0], vertex[1], vertex[2]);
         return std::make_unique<Polygon>(color, shininess, reflectiveness, vertices);
     }
+    else if (data["type"] == "Parallelepiped")
+    {
+        vec3d vertex = vec3d(std::vector<double>(data["vertex"]));
+        vec3d edge1 = vec3d(std::vector<double>(data["edge1"]));
+        vec3d edge2 = vec3d(std::vector<double>(data["edge2"]));
+        vec3d edge3 = vec3d(std::vector<double>(data["edge3"]));
+        return std::make_unique<Parallelepiped>(color, shininess, reflectiveness, vertex, edge1, edge2, edge3);
+    }
 
     throw std::invalid_argument("Unknown object (primitive) type: " + std::string(data["type"]));
 }

@@ -9,15 +9,14 @@
             "radius": 1
         },
         {
-            "type": "Polygon",
+            "type": "Parallelepiped",
             "color": [0, 255, 0, 255],
             "shininess": "NaN",
             "reflectiveness": 0,
-            "vertices": [
-                [-1, 3, 5],
-                [1, 0, 5],
-                [-1, 0, 5]
-            ]
+            "vertex": [1, 0, 5],
+            "edge1": [-2, 0, 0],
+            "edge2": [1, 1, 2],
+            "edge3": [0, 2, 0]
         }
     ],
     "light_sources": [

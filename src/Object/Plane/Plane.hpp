@@ -15,8 +15,9 @@ public:
 
     double find_closest_intersection(vec3d& point, vec3d& direction) override;
     vec3d get_normal(vec3d& point) override;
+    bool does_point_lie_on_plane(vec3d& point);
 
 protected:
     vec3d normal;
-    vec3d point;
+    vec3d plane_point;
 };

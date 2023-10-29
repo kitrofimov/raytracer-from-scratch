@@ -14,6 +14,7 @@ set(
   Object/Sphere/Sphere.cpp
   Object/Plane/Plane.cpp
   Object/Polygon/Polygon.cpp
+  Object/Parallelepiped/Parallelepiped.cpp
 
   # Light sources
   Light/LightSource.cpp

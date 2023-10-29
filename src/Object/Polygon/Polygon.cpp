@@ -31,7 +31,7 @@ Polygon::Polygon(Color color, double shininess, double reflectiveness,
 // Partially copy-pasted from `Plane` class
 double Polygon::find_closest_intersection(vec3d& point, vec3d& direction)
 {
-    double t = ( this->normal * (this->point - point) ) / ( this->normal * direction );
+    double t = ( this->normal * (this->plane_point - point) ) / ( this->normal * direction );
     if (t <= tolerance)  // only positive t
         return qNaN;
 
@@ -68,9 +68,9 @@ double Polygon::calculate_area()
     if (this->n_edges == 3)
         area = this->edge_vectors[2].cross_product(this->edge_vectors[0]).magnitude() / 2;
 
-    for (std::size_t i = 2; i < (this->n_edges-2); i++)
+    for (std::size_t i = 2; i < this->n_edges; i++)
     {
-        double area_of_this_triangle = (this->vertices[i] - this->vertices[0]).cross_product(this->edge_vectors[i-2]).magnitude() / 2;
+        double area_of_this_triangle = (this->vertices[i] - this->vertices[0]).cross_product(-this->edge_vectors[i-1]).magnitude() / 2;
         area += area_of_this_triangle;
     }
     return area;

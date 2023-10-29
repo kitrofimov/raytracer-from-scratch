@@ -70,19 +70,21 @@ New features:
         - [ ] Edge case: points all lie on one line / the same point
         - [ ] Edge case: points does not lie on one plane
         - [ ] Check for overlapping (multiple polygons share vertices)
-    - [ ] Parallelepiped (wrapper for `Polygon`)
+    - [x] Parallelepiped (wrapper for `Polygon`)
+        - [ ] разобраться с поворотами (по часовой, против часовой)
+        - [ ] Edge case: some edge vectors are the same
     - [ ] Cylinder
     - [ ] Tube
     - [ ] Torus
     - [ ] Cone
-- [ ] Make `Polygon` "independent" from `Triangle`, delete `Triangle`
-- [ ] Light depends on orientation of triangle/plane
-- [ ] Add `cerr` warnings for edge cases
+- [ ] Light depends on orientation (normal vector direction) of plane/polygon
+- [ ] Add `throw` errors for edge cases
 - [ ] Fix light bugs
     - [ ] `AmbientLight::intensity` is being implicitly upscaled to `0.2` in `Scene::calculate_color`
     - [ ] Search for other bugs
 - [ ] Make `scene.json` parser better
 - [ ] Camera transform (camera matrix)
+- [ ] Test new primitives under new angles!
 - [ ] Camera configuration in `scene.json`
 - [ ] Textures
 - [ ] Real-time rendering, camera movement
