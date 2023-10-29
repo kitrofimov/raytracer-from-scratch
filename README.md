@@ -78,14 +78,14 @@ New features:
         - [ ] Edge case: points all lie on one line / the same point
         - [ ] Edge case: points does not lie on one plane
         - [ ] Check for overlapping (multiple polygons share vertices)
-    - [ ] Cube
+    - [ ] Parallelepiped
     - [ ] Cylinder
     - [ ] Tube
     - [ ] Torus
     - [ ] Cone
     - [ ] Pipe (???)
     - [ ] Donut (???)
-    - [ ] Terrain (???)
+- [ ] Make `Polygon` "independent" from `Triangle`, delete `Triangle`
 - [ ] Light depends on orientation of triangle/plane
 - [ ] Add `cerr` warnings for edge cases
 - [ ] Fix light bugs
