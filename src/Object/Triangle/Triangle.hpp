@@ -3,7 +3,6 @@
 #include "Object/Plane/Plane.hpp"
 #include "utils/color/color.hpp"
 #include "utils/vec/vec3.hpp"
-#include "constants.hpp"
 
 // Uses clockwise orientation
 class Triangle : public Plane

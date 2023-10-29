@@ -9,13 +9,16 @@
             "radius": 1
         },
         {
-            "type": "Triangle",
-            "color": [0, 255, 0, 255],
+            "type": "Polygon",
+            "color": [255, 0, 0, 255],
             "shininess": "NaN",
             "reflectiveness": 0,
-            "A": [-1, 3, 5],
-            "B": [1, 0, 5],
-            "C": [-1, 0, 5]
+            "points": [
+                [1, 0, 5],
+                [1, 3, 5],
+                [-1, 3, 5],
+                [-1, 0, 5]
+            ]
         }
     ],
     "light_sources": [

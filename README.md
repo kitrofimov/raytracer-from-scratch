@@ -65,14 +65,19 @@ New features:
         - [x] Edge case: `pointN` all lie on one line / the same point
             - In this case there is no plane at all, nothing breaks
     - [x] Triangle
+        - [x] Change parser to accept `Triangle`
+        - [ ] разобраться с поворотами (по часовой, против часовой)
         - [x] Edge case: points all lie on one line / the same point
             - In this case there is no triangle at all, nothing breaks
         - [x] Check for overlapping (multiple triangles share vertices)
             - Good, there is no overlapping
     - [ ] Polygon (wrapper class for multiple `Triangle`'s)
+        - [x] Change parser to accept `Polygon`
+        - [ ] Make triangulation algorithm better
+        - [ ] разобраться с поворотами (по часовой, против часовой)
         - [ ] Edge case: points all lie on one line / the same point
         - [ ] Edge case: points does not lie on one plane
-        - [ ] Overlapping (multiple triangles share vertices)
+        - [ ] Check for overlapping (multiple polygons share vertices)
     - [ ] Cube
     - [ ] Cylinder
     - [ ] Tube

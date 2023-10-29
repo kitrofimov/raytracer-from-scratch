@@ -225,6 +225,13 @@ std::unique_ptr<Object> Scene::create_primitive(json data)
         vec3d C = vec3d(std::vector<double>(data["C"]));
         return std::make_unique<Triangle>(color, shininess, reflectiveness, A, B, C);
     }
+    else if (data["type"] == "Polygon")
+    {
+        std::vector<vec3d> points;
+        for (std::vector<double> point : data["points"])
+            points.emplace_back(point[0], point[1], point[2]);
+        return std::make_unique<Polygon>(color, shininess, reflectiveness, points);
+    }
 
     throw std::invalid_argument("Unknown object (primitive) type: " + std::string(data["type"]));
 }
