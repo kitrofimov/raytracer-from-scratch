@@ -64,27 +64,17 @@ New features:
             - In this case formula divides by zero, no plane at all, nothing breaks
         - [x] Edge case: `pointN` all lie on one line / the same point
             - In this case there is no plane at all, nothing breaks
-    - [x] Triangle
-        - [x] Change parser to accept `Triangle`
-        - [ ] разобраться с поворотами (по часовой, против часовой)
-        - [x] Edge case: points all lie on one line / the same point
-            - In this case there is no triangle at all, nothing breaks
-        - [x] Check for overlapping (multiple triangles share vertices)
-            - Good, there is no overlapping
-    - [ ] Polygon (wrapper class for multiple `Triangle`'s)
+    - [x] Polygon (convex n-gon)
         - [x] Change parser to accept `Polygon`
-        - [ ] Make triangulation algorithm better
         - [ ] разобраться с поворотами (по часовой, против часовой)
         - [ ] Edge case: points all lie on one line / the same point
         - [ ] Edge case: points does not lie on one plane
         - [ ] Check for overlapping (multiple polygons share vertices)
-    - [ ] Parallelepiped
+    - [ ] Parallelepiped (wrapper for `Polygon`)
     - [ ] Cylinder
     - [ ] Tube
     - [ ] Torus
     - [ ] Cone
-    - [ ] Pipe (???)
-    - [ ] Donut (???)
 - [ ] Make `Polygon` "independent" from `Triangle`, delete `Triangle`
 - [ ] Light depends on orientation of triangle/plane
 - [ ] Add `cerr` warnings for edge cases
