@@ -57,30 +57,39 @@ That means if you want your directional light to be white, 100% intense and to "
 ## TODO/NOTES
 New features:
 - [ ] Add other primitives
+    - [x] Sphere
     - [x] Plane
         - [x] Change parser to accept new `Plane` constructor
+        - [x] Edge case: ray has infinitely many points with plane
+            - In this case formula divides by zero, no plane at all, nothing breaks
         - [x] Edge case: `pointN` all lie on one line / the same point
             - In this case there is no plane at all, nothing breaks
-            - [ ] Add a warning?
-    - [ ] Triangle
-        - [ ] Edge case: points all lie on one line / the same point
-        - [ ] Overlapping (multiple triangles )
+    - [x] Triangle
+        - [x] Edge case: points all lie on one line / the same point
+            - In this case there is no triangle at all, nothing breaks
+        - [x] Check for overlapping (multiple triangles share vertices)
+            - Good, there is no overlapping
     - [ ] Polygon (wrapper class for multiple `Triangle`'s)
+        - [ ] Edge case: points all lie on one line / the same point
+        - [ ] Edge case: points does not lie on one plane
+        - [ ] Overlapping (multiple triangles share vertices)
     - [ ] Cube
     - [ ] Cylinder
     - [ ] Tube
-    - [ ] Sphere
     - [ ] Torus
     - [ ] Cone
     - [ ] Pipe (???)
     - [ ] Donut (???)
     - [ ] Terrain (???)
+- [ ] Light depends on orientation of triangle/plane
+- [ ] Add `cerr` warnings for edge cases
 - [ ] Fix light bugs
     - [ ] `AmbientLight::intensity` is being implicitly upscaled to `0.2` in `Scene::calculate_color`
     - [ ] Search for other bugs
 - [ ] Make `scene.json` parser better
 - [ ] Camera transform (camera matrix)
 - [ ] Camera configuration in `scene.json`
+- [ ] Textures
 - [ ] Real-time rendering, camera movement
 
 Potential bug causes:
