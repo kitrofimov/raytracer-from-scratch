@@ -1,55 +1,77 @@
+#include <algorithm>
+#include <numeric>
+
 #include "Polygon.hpp"
-#include "Object/Triangle/Triangle.hpp"
 #include "utils/Color/Color.hpp"
 #include "utils/vec/vec3.hpp"
+#include "utils/roughly_equal_to.hpp"
 
 Polygon::Polygon(Color color, double shininess, double reflectiveness,
-                 std::vector<vec3d> points)
+                 std::vector<vec3d> vertices) :
+                 Plane(color, shininess, reflectiveness, vertices[0], vertices[1], vertices[2]),
+                 edge_vectors(vertices.size(), vec3d())
 {
-    this->color = color;
-    this->shininess = shininess;
-    this->reflectiveness = reflectiveness;
+    this->vertices = vertices;
+    this->n_edges = vertices.size();
 
-    std::vector<std::vector<vec3d>> triangulated = this->triangulate(points);
-    for (auto& vertices : triangulated)
-        this->triangles.emplace_back(color, shininess, reflectiveness, vertices[0], vertices[1], vertices[2]);
+    if (this->n_edges < 3)
+        throw std::invalid_argument("Polygon should have at least 3 vertices!");
+
+    for (std::size_t i = 0; i < this->n_edges; i++)
+    {
+        if (i == this->n_edges - 1)
+            this->edge_vectors[i] = this->vertices[0] - this->vertices[i];
+        else
+            this->edge_vectors[i] = this->vertices[i+1] - this->vertices[i];
+    }
+
+    this->area = this->calculate_area();
 }
 
+// Partially copy-pasted from `Plane` class
 double Polygon::find_closest_intersection(vec3d& point, vec3d& direction)
 {
-    for (auto& triangle : this->triangles)
-    {
-        // Only one intersection is possible (in most cases)
-        // So if we find one, we should not continue to look for another one
-        double t = triangle.find_closest_intersection(point, direction);
-        if (!std::isnan(t))
-            return t;
-    }
-    return qNaN;
+    double t = ( this->normal * (this->point - point) ) / ( this->normal * direction );
+    if (t <= tolerance)  // only positive t
+        return qNaN;
+
+    return (this->is_point_in_polygon(point + direction * t)) ? t : qNaN;
 }
 
-vec3d Polygon::get_normal(vec3d& point)
+bool Polygon::is_point_in_polygon(vec3d point)
 {
-    return this->triangles[0].get_normal(point);
+    std::vector<vec3d> v2p_vectors(this->n_edges, vec3d());  // vertices to point vectors. v0p, v1p, v2p, ...
+    for (std::size_t i = 0; i < this->n_edges; i++)
+        v2p_vectors[i] = point - this->vertices[i];
+
+    std::vector<double> barycentric(this->n_edges, 0);
+    for (std::size_t i = 0; i < this->n_edges; i++)
+    {
+        double area_of_this_triangle = v2p_vectors[i].cross_product(this->edge_vectors[i]).magnitude() / 2;
+        barycentric[i] = area_of_this_triangle / this->area;
+    }
+
+    // if all barycentric coordinates lie in range [0, 1] and sum of them is equal to 1
+    bool greater_than_or_equal_to_zero = std::all_of(barycentric.cbegin(), barycentric.cend(), [](int i) { return 0 <= i; });
+    bool less_than_or_equal_to_one = std::all_of(barycentric.cbegin(), barycentric.cend(), [](int i) { return i <= 1; });
+    double sum = std::reduce(barycentric.begin(), barycentric.end());
+
+    if (greater_than_or_equal_to_zero && less_than_or_equal_to_one && roughly_equal_to(sum, 1.0))
+        return true;
+    return false;
 }
 
-std::vector<std::vector<vec3d>> Polygon::triangulate(std::vector<vec3d> points)
+double Polygon::calculate_area()
 {
-    // wtf
-    std::vector<std::vector<vec3d>> result;
-    for (unsigned int i = 0; true; i += 2)
-    {
-        // OOB checks
-        if (i >= points.size())
-            return result;
-        else if (i+1 >= points.size() || i+2 >= points.size())
-        {
-            result.push_back(std::vector<vec3d>({points[i], points[i+1], points[0]}));
-            return result;
-        }
+    double area = 0;
 
-        // if there is enough vertices yet
-        result.push_back(std::vector<vec3d>({points[i], points[i+1], points[i+2]}));
+    if (this->n_edges == 3)
+        area = this->edge_vectors[2].cross_product(this->edge_vectors[0]).magnitude() / 2;
+
+    for (std::size_t i = 2; i < (this->n_edges-2); i++)
+    {
+        double area_of_this_triangle = (this->vertices[i] - this->vertices[0]).cross_product(this->edge_vectors[i-2]).magnitude() / 2;
+        area += area_of_this_triangle;
     }
-    return result;
+    return area;
 }

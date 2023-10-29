@@ -24,7 +24,7 @@ Plane::Plane(Color color, double shininess, double reflectiveness,
     this->normal = v1.cross_product(v2).normalize();
 }
 
-// `Triangle::find_closest_intersection` SHOULD BE CHANGED TOO IF THIS IS CHANGED!
+// `Polygon::find_closest_intersection` SHOULD BE CHANGED TOO IF THIS IS CHANGED!
 // `point` - start of a ray
 double Plane::find_closest_intersection(vec3d& point, vec3d& direction)
 {
