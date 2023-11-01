@@ -73,7 +73,8 @@ New features:
     - [x] Parallelepiped (wrapper for `Polygon`)
         - [ ] разобраться с поворотами (по часовой, против часовой)
         - [ ] Edge case: some edge vectors are the same
-    - [ ] Cylinder
+    - [ ] Ellipse
+    - [ ] Cylinder ((in)finite, open/closed-ended)
     - [ ] Tube
     - [ ] Torus
     - [ ] Cone

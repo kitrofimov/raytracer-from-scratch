@@ -5,18 +5,8 @@
             "color": [0, 0, 255, 255],
             "shininess": "NaN",
             "reflectiveness": 0,
-            "position": [0, -1.25, 3],
+            "position": [0, 0, 3],
             "radius": 1
-        },
-        {
-            "type": "Parallelepiped",
-            "color": [0, 255, 0, 255],
-            "shininess": "NaN",
-            "reflectiveness": 0,
-            "vertex": [1, 0, 5],
-            "edge1": [-2, 0, 0],
-            "edge2": [1, 1, 2],
-            "edge3": [0, 2, 0]
         }
     ],
     "light_sources": [
@@ -24,7 +14,7 @@
             "type": "PointLight",
             "intensity": 1,
             "color": [255, 255, 255, 255],
-            "position": [-2, 0, 0]
+            "position": [-3, 3, 0]
         },
         {
             "type": "AmbientLight",
