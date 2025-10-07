@@ -1,18 +1,20 @@
 # raytracer-from-scratch
 
-A raytracer which uses left-hand coordinate system and in which camera looks in `+Z` direction by default. Supports normal (pixel-based) and terminal-based rendering!
+A hobby-level raytracer written from-scratch, featuring:
+- a sphere primitive
+- a variety of light sources (point, ambient, directional)
+- shininess
+- reflections
 
 ![Normal rendering](images/normal-rendering.png)
 
+Terminal-based rendering (just for fun):
 ![Terminal rendering](images/terminal-based-rendering.png)
 
-Features:
-- Sphere primitive
-- Variety of light sources (point, ambient, directional)
-- Shininess
-- Reflections
-
-Visualization of the simple scene I made in GeoGebra: https://www.geogebra.org/calculator/zfexqajh
+Implementation details:
+- left-hand coordinate system
+- camera looks in `+Z` direction
+- a [GeoGebra scene](https://www.geogebra.org/calculator/zfexqajh) I used to debug this (proved very effective!)
 
 # Installation
 ```bash
@@ -67,3 +69,4 @@ New features:
 
 Potential bug causes:
 - [ ] `alpha` parameter is changing during `color_t` arithmetic (should it?)
+
