@@ -6,10 +6,11 @@ A hobby-level raytracer written from-scratch, featuring:
 - shininess
 - reflections
 
-![Normal rendering](images/normal-rendering.png)
+<img src="images/normal-rendering.png" width="600">
 
 Terminal-based rendering (just for fun):
-![Terminal rendering](images/terminal-based-rendering.png)
+
+<img src="images/terminal-based-rendering.png" width="600">
 
 Implementation details:
 - left-hand coordinate system
@@ -69,4 +70,5 @@ New features:
 
 Potential bug causes:
 - [ ] `alpha` parameter is changing during `color_t` arithmetic (should it?)
+
 
